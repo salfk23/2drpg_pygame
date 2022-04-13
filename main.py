@@ -43,6 +43,10 @@ class GameUI:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     loop = False
+            key_pressed = pygame.key.get_pressed()
+            for entity in self.entities:
+                entity.move(key_pressed)
+
             self.draw()
 
 
