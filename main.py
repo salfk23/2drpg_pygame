@@ -1,5 +1,6 @@
-from cProfile import run
 import pygame
+
+from game import Entity, Player
 
 
 WIDTH, HEIGHT = 800, 600
@@ -18,12 +19,19 @@ class Colors:
 
 class GameUI:
     def __init__(self):
-        self.entities = []
+        self.entities : list[Entity] = []
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("2D RPG Game")
 
+        player = Player(100, 100)
+
+        self.entities.append(player)
+
     def draw(self):
+
         self.window.fill(Colors.WHITE)
+        for entity in self.entities:
+            self.window.blit(entity.object, (entity.x, entity.y))
         pygame.display.update()
 
     def run(self):
