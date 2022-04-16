@@ -4,28 +4,84 @@ import pygame
 from movable import IMoveable
 
 
+class HurtBox:
+  def __init__(self, x1: int, y1: int, x2: int, y2: int):
+    self.x1 = x1
+    self.y1 = y1
+    self.x2 = x2
+    self.y2 = y2
+
+  def conflict(self, other:'HurtBox'):
+    # If the two hurtboxes are overlapping, return true
+    return (self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
+
 class Entity:
-  def __init__(self, x:int, y:int, width:int, height:int, image:pygame.Surface):
+  def __init__(self, x:int, y:int, width:int, height:int, sprite:pygame.Surface):
     self.x = x
     self.y = y
     self.width = width
     self.height = height
-    self.image = image
+    self.sprite = sprite
+    self.remove = False
+    self.name = "Entity"
+    self.hurtbox = HurtBox(x, y, x+width, y+height)
 
     self.object = pygame.transform.rotate(
-      pygame.transform.scale(self.image, (self.width, self.height)), 0)
+      pygame.transform.scale(self.sprite, (self.width, self.height)), 0)
 
 class Player(Entity, IMoveable):
   def __init__(self, x:int, y:int):
-    super().__init__(x, y, 32, 32, pygame.image.load("assets/test_player.png"))
+    super().__init__(x, y, 32, 52, pygame.image.load("assets/player.png"))
+    self.name = "Player"
 
-  def move(self, key_pressed:Sequence[bool]):
+  def move(self, key_pressed:Sequence[bool], entities:list[Entity]):
+    y_mod, x_mod = 0, 0
     if key_pressed[pygame.K_w]:
-      self.y -= 1
+      y_mod -= 1
     if key_pressed[pygame.K_s]:
-      self.y += 1
+      y_mod += 1
     if key_pressed[pygame.K_a]:
-      self.x -= 1
+      x_mod -= 1
     if key_pressed[pygame.K_d]:
+      x_mod += 1
+
+    # New hurtbox but for Y
+    new_hurtbox = HurtBox(self.x, self.y+y_mod, self.x+self.width, self.y+self.height+y_mod)
+    conflict = False
+    for entity in entities:
+      if entity.hurtbox.conflict(new_hurtbox) and self is not entity:
+        conflict = True
+        break
+
+    if not conflict:
+      self.y += y_mod
+      self.hurtbox = new_hurtbox
+
+    new_hurtbox = HurtBox(self.x+x_mod, self.y, self.x+self.width+x_mod, self.y+self.height)
+    conflict = False
+    for entity in entities:
+      if entity.hurtbox.conflict(new_hurtbox) and self is not entity:
+        conflict = True
+        break
+    if not conflict:
+      self.x += x_mod
+      self.hurtbox = new_hurtbox
+
+
+
+class Enemy(Entity, IMoveable):
+  def __init__(self, x:int, y:int):
+    super().__init__(x, y, 32, 52, pygame.image.load("assets/enemy.png"))
+    self.name = "Enemy"
+    self.remove_once_OB = True
+
+  def move(self, key_pressed:Sequence[bool], entities:list[Entity]):
+    if key_pressed[pygame.K_UP]:
+      self.y -= 1
+    if key_pressed[pygame.K_DOWN]:
+      self.y += 1
+    if key_pressed[pygame.K_LEFT]:
+      self.x -= 1
+    if key_pressed[pygame.K_RIGHT]:
       self.x += 1
 

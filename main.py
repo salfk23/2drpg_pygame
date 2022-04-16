@@ -1,11 +1,16 @@
 import pygame
 
-from game import Entity, Player
+from game import Enemy, Entity, Player
 
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 800, 400
 
 
+def do_nothing(*args, **kwargs):
+    pass
+
+debug_print = print
+# debug_print = do_nothing
 class Colors:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -18,20 +23,37 @@ class Colors:
 
 
 class GameUI:
+    entities: list[Entity] = []
     def __init__(self):
-        self.entities : list[Entity] = []
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("2D RPG Game")
 
         player = Player(100, 100)
+        enemy = Enemy(100, 200)
 
-        self.entities.append(player)
+        ground = Entity(0, HEIGHT-32, WIDTH, 32, pygame.Surface((WIDTH, 32)))
+        ground.name = "Ground"
+
+        GameUI.entities.append(player)
+        GameUI.entities.append(enemy)
+        GameUI.entities.append(ground)
 
     def draw(self):
 
         self.window.fill(Colors.WHITE)
-        for entity in self.entities:
+        for entity in GameUI.entities:
+            if (entity.x <= WIDTH and entity.y <= HEIGHT and
+                entity.x >= 0-entity.width and entity.y >= 0-entity.height):
+                # If entity is within the screen
+                self.window.blit(entity.object, (entity.x, entity.y))
+                debug_print("[IB]", entity.name, entity.x, entity.y, end='\t')
+            else:
+                # If entity is completely outside the screen
+                debug_print("[OB]", entity.name, entity.x, entity.y, end='\t')
+                if entity.remove:
+                    self.entities.remove(entity)
             self.window.blit(entity.object, (entity.x, entity.y))
+        debug_print()
         pygame.display.update()
 
     def run(self):
@@ -44,8 +66,10 @@ class GameUI:
                 if event.type == pygame.QUIT:
                     loop = False
             key_pressed = pygame.key.get_pressed()
-            for entity in self.entities:
-                entity.move(key_pressed)
+            for entity in GameUI.entities:
+                # Check if method move exists
+                if hasattr(entity, 'move'):
+                    entity.move(key_pressed, GameUI.entities)
 
             self.draw()
 
