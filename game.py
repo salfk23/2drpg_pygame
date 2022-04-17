@@ -3,6 +3,11 @@ import pygame
 
 from movable import IMoveable
 
+NORMAL_SIZE_ENTITY = (32, 52)
+class Hurtable:
+  def __init__(self, health: int, max_health: int):
+    self.health = health
+    self.max_health = max_health
 
 class HurtBox:
   def __init__(self, x1: int, y1: int, x2: int, y2: int):
@@ -29,9 +34,10 @@ class Entity:
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, (self.width, self.height)), 0)
 
-class Player(Entity, IMoveable):
+class Player(Entity, Hurtable, IMoveable):
   def __init__(self, x:int, y:int):
-    super().__init__(x, y, 32, 52, pygame.image.load("assets/player.png"))
+    super().__init__(x, y, NORMAL_SIZE_ENTITY[0], NORMAL_SIZE_ENTITY[1], pygame.image.load("assets/player.png"))
+    Hurtable.__init__(self, 100, 100)
     self.name = "Player"
 
   def move(self, key_pressed:Sequence[bool], entities:list[Entity]):
@@ -69,11 +75,11 @@ class Player(Entity, IMoveable):
 
 
 
-class Enemy(Entity, IMoveable):
+class Enemy(Entity, Hurtable, IMoveable):
   def __init__(self, x:int, y:int):
-    super().__init__(x, y, 32, 52, pygame.image.load("assets/enemy.png"))
+    super().__init__(x, y, NORMAL_SIZE_ENTITY[0], NORMAL_SIZE_ENTITY[1], pygame.image.load("assets/enemy.png"))
+    Hurtable.__init__(self, 100, 100)
     self.name = "Enemy"
-    self.remove_once_OB = True
 
   def move(self, key_pressed:Sequence[bool], entities:list[Entity]):
     if key_pressed[pygame.K_UP]:
@@ -85,3 +91,8 @@ class Enemy(Entity, IMoveable):
     if key_pressed[pygame.K_RIGHT]:
       self.x += 1
 
+class Weapon(Entity):
+  def __init__(self, x:int, y:int, width:int, height:int, sprite:pygame.Surface):
+    super().__init__(x, y, width, height, sprite)
+    self.name = "Weapon"
+    self.remove = False

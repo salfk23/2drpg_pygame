@@ -1,6 +1,6 @@
 import pygame
 
-from game import Enemy, Entity, Player
+from game import Enemy, Entity, Hurtable, Player
 
 
 WIDTH, HEIGHT = 800, 400
@@ -34,7 +34,10 @@ class GameUI:
         ground = Entity(0, HEIGHT-32, WIDTH, 32, pygame.Surface((WIDTH, 32)))
         ground.name = "Ground"
 
+
+
         GameUI.entities.append(player)
+        player.health = 40
         GameUI.entities.append(enemy)
         GameUI.entities.append(ground)
 
@@ -52,7 +55,15 @@ class GameUI:
                 debug_print("[OB]", entity.name, entity.x, entity.y, end='\t')
                 if entity.remove:
                     self.entities.remove(entity)
+
             self.window.blit(entity.object, (entity.x, entity.y))
+            # If entity extends Hurtable class
+            if isinstance(entity, Hurtable):
+                debug_print("[H]", entity.health, entity.max_health, end='\t')
+                # Add red bar
+                self.window.fill(Colors.RED, (entity.x, entity.y-10, entity.width, 5))
+                # Add health bar
+                self.window.fill(Colors.GREEN, (entity.x, entity.y-10, (entity.width*entity.health)//entity.max_health, 5))
         debug_print()
         pygame.display.update()
 
