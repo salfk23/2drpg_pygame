@@ -1,6 +1,7 @@
 import pygame
 
-from game import Enemy, Entity, Hurtable, Player
+from engine.entities.characters import Enemy, Player
+from engine.entities.entity import Entity, Hurtable
 
 
 WIDTH, HEIGHT = 800, 400
