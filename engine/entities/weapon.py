@@ -1,6 +1,5 @@
 import pygame
-from engine.entities.entity import Entity, Hurtable
-from movable import IMoveable
+from engine.entities.entity import Entity, Hurtable, IMoveable
 
 
 class Weapon(Entity):

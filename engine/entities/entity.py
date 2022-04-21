@@ -1,7 +1,6 @@
-from typing import Sequence
+import abc
 import pygame
 
-from movable import IMoveable
 
 NORMAL_SIZE_ENTITY = (32, 52)
 class Hurtable:
@@ -34,3 +33,9 @@ class Entity:
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, (self.width, self.height)), 0)
 
+
+class IMoveable(metaclass=abc.ABCMeta):
+  @classmethod
+  def __subclasshook__(cls, subclass):
+    return (hasattr(subclass, 'move') and
+            callable(subclass.move))
