@@ -12,16 +12,6 @@ def do_nothing(*args, **kwargs):
 
 debug_print = print
 # debug_print = do_nothing
-class Colors:
-    BLACK = (0, 0, 0)
-    WHITE = (255, 255, 255)
-    RED = (255, 0, 0)
-    GREEN = (0, 255, 0)
-    BLUE = (0, 0, 255)
-    YELLOW = (255, 255, 0)
-    PURPLE = (255, 0, 255)
-    CYAN = (0, 255, 255)
-
 
 class GameUI:
     entities: list[Entity] = []
