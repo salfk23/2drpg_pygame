@@ -1,7 +1,13 @@
 import abc
+from typing import Generic, TypeVar
 
 from engine.entities.entity import Entity
 
+
+Size2D = tuple[int, int]
+"""Screen size tuple
+Have 2 ints: width and height
+"""
 
 class Singleton(type):
     _instances = {}
@@ -21,9 +27,10 @@ class Colors:
     PURPLE = (255, 0, 255)
     CYAN = (0, 255, 255)
 
+T = TypeVar('T')
 
 # ManagerInterface
-class IEntityManager(metaclass=abc.ABCMeta):
+class IManager(Generic[T],metaclass=abc.ABCMeta):
     """ManagerInterface
     This is the interface for all managers.
     """
@@ -36,19 +43,19 @@ class IEntityManager(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def get_all(self):
-        """Return a list of all entities.
+        """Return a list of all items.
 
         Returns:
-            list[Entity]: A list of all entities.
+            list[T]: A list of all T items.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add(self, entity: Entity):
-        """Add an entity to the manager."""
+    def add(self, item: T):
+        """Add an item to the manager."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def remove(self, entity: Entity):
+    def remove(self, item: T):
         """Remove an entity from the manager."""
         raise NotImplementedError
