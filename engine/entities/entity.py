@@ -1,6 +1,8 @@
 import abc
 import pygame
 
+from engine.helpers import Colors, Size2D
+
 
 NORMAL_SIZE_ENTITY = (32, 52)
 class Hurtable:
@@ -20,18 +22,32 @@ class HurtBox:
     return (self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
 
 class Entity:
-  def __init__(self, x:int, y:int, width:int, height:int, sprite:pygame.Surface):
-    self.x = x
-    self.y = y
-    self.width = width
-    self.height = height
-    self.sprite = sprite
+  def __init__(self, position:pygame.Vector2, size: Size2D):
+    self.position = position
+    self.velocity = pygame.Vector2(0, 0)
+    self.size = size
+    # Make a rectangle with color green
+    self.sprite = pygame.Surface(size)
+    self.sprite.fill(Colors.GREEN)
+
+    # Facing right
+    self.front_facing = True
+
+    # Remove from the entity manager
     self.remove = False
+    # If the entity has input
+    self.input = False
+
     self.name = "Entity"
-    self.hurtbox = HurtBox(x, y, x+width, y+height)
+    # Rectangle for collision detection
+    self.hurtbox = pygame.Rect(self.position.x, self.position.y, self.size.width, self.size.height)
 
     self.object = pygame.transform.rotate(
-      pygame.transform.scale(self.sprite, (self.width, self.height)), 0)
+      pygame.transform.scale(self.sprite, self.size), 0)
+  def update(self):
+    pass
+
+
 
 
 class IMoveable(metaclass=abc.ABCMeta):
