@@ -2,7 +2,7 @@
 from typing import Sequence
 import pygame
 
-from engine.entities.entity import NORMAL_SIZE_ENTITY, Entity, HurtBox, Hurtable, IMoveable
+from game_engine.entities.entity import NORMAL_SIZE_ENTITY, Entity, HurtBox, Hurtable, IMoveable
 
 
 class Player(Entity, Hurtable, IMoveable):

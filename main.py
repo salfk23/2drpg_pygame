@@ -1,8 +1,8 @@
 import pygame
-from engine.entities.entity import Entity
-from engine.helpers import Config
+from game_engine.entities.entity import Entity
+from game_engine.helpers import Config
 
-from engine.ui import EntityManager, GameEngine
+from game_engine.engine import EntityManager, GameEngine
 
 # from engine.entities.characters import Enemy, Player
 # from engine.entities.entity import Entity, Hurtable
@@ -81,6 +81,14 @@ from engine.ui import EntityManager, GameEngine
 #             self.draw()
 
 
+class MovableBox(Entity):
+    def __init__(self, position:pygame.Vector2, size:pygame.Vector2):
+        super().__init__(position, size)
+        self.input = True
+
+
+
+
 def main_old():
     print("Running!")
     ui = GameUI()
@@ -91,7 +99,7 @@ def main():
     game = GameEngine.instance()
     em = EntityManager.instance()
     em.add(
-        Entity(pygame.Vector2(40, 40), (40, 40))
+        MovableBox(pygame.Vector2(40, 40), (40, 40))
     )
     game.run()
 
