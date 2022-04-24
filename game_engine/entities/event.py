@@ -4,6 +4,8 @@ from game_engine.helpers import Singleton
 
 
 PyGame_EventType = int
+# Make a lambda with 2 parameters
+EmptyCallback = lambda event: None
 class EventListenerInstance:
     def __init__(self):
         self.event_listener: dict[PyGame_EventType, dict[int, Callable]] = {}
@@ -12,7 +14,7 @@ class EventListenerInstance:
 
     def update(self, event_type: PyGame_EventType, obj:object, callback: Callable):
         # Check if callback have 1 argument
-        if len(callback.__code__.co_varnames) != 2:
+        if len(callback.__code__.co_varnames) != 1:
             raise ValueError("Callback must have 1 argument")
         if event_type not in self.event_listener:
             self.event_listener[event_type] = {}

@@ -32,8 +32,6 @@ class IMoveable(metaclass=abc.ABCMeta):
 class Entity:
   def __init__(self, position:pygame.Vector2, size: Size2D):
     self.position = position
-    self.velocity = pygame.Vector2(0, 0)
-    self.ticker = 0
     self.size = size
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)

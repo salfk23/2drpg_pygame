@@ -17,9 +17,10 @@ class GameEngineInstance:
         self.running = False
         # Event listener, int and function dictionary
         self.event_listener = EventListener.instance()
-        self.event_listener.update(pygame.QUIT, id(self), self.stop)
+        self.event_listener.update(pygame.QUIT, id(self), lambda e: self.stop(e))
 
     def stop(self, event:pygame.event.Event):
+        print('Stopping Game engine')
         self.running = False
 
     def run(self):

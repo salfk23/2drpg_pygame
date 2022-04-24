@@ -1,137 +1,74 @@
 import pygame
 from game_engine.entities.entity import Entity
-from game_engine.entities.event import EventListener
-from game_engine.helpers import Config
+from game_engine.entities.event import EmptyCallback, EventListener
+from game_engine.helpers import Config, Size2D
 
 from game_engine.engine import EntityManager, GameEngine
-
-# from engine.entities.characters import Enemy, Player
-# from engine.entities.entity import Entity, Hurtable
-# from engine.ui import GameEngine
-
-
-# WIDTH, HEIGHT = 800, 400
-
-
-# def do_nothing(*args, **kwargs):
-#     pass
-
-# debug_print = print
-# # debug_print = do_nothing
-
-# class GameUI:
-#     entities: list[Entity] = []
-#     def __init__(self):
-#         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
-#         pygame.display.set_caption("2D RPG Game")
-
-#         player = Player(100, 100)
-#         enemy = Enemy(100, 200)
-
-#         ground = Entity(0, HEIGHT-32, WIDTH, 32, pygame.Surface((WIDTH, 32)))
-#         ground.name = "Ground"
-
-
-
-#         GameUI.entities.append(player)
-#         player.health = 40
-#         GameUI.entities.append(enemy)
-#         GameUI.entities.append(ground)
-
-#     def draw(self):
-
-#         self.window.fill(Colors.WHITE)
-#         for entity in GameUI.entities:
-#             if (entity.x <= WIDTH and entity.y <= HEIGHT and
-#                 entity.x >= 0-entity.width and entity.y >= 0-entity.height):
-#                 # If entity is within the screen
-#                 self.window.blit(entity.object, (entity.x, entity.y))
-#                 debug_print("[IB]", entity.name, entity.x, entity.y, end='\t')
-#             else:
-#                 # If entity is completely outside the screen
-#                 debug_print("[OB]", entity.name, entity.x, entity.y, end='\t')
-#                 if entity.remove:
-#                     self.entities.remove(entity)
-
-#             self.window.blit(entity.object, (entity.x, entity.y))
-#             # If entity extends Hurtable class
-#             if isinstance(entity, Hurtable):
-#                 debug_print("[H]", entity.health, entity.max_health, end='\t')
-#                 # Add red bar
-#                 self.window.fill(Colors.RED, (entity.x, entity.y-10, entity.width, 5))
-#                 # Add health bar
-#                 self.window.fill(Colors.GREEN, (entity.x, entity.y-10, (entity.width*entity.health)//entity.max_health, 5))
-#         debug_print()
-#         pygame.display.update()
-
-#     def run(self):
-#         loop = True
-#         clock = pygame.time.Clock()
-
-#         while loop:
-#             clock.tick(60)
-#             for event in pygame.event.get():
-#                 if event.type == pygame.QUIT:
-#                     loop = False
-#             key_pressed = pygame.key.get_pressed()
-#             for entity in GameUI.entities:
-#                 # Check if method move exists
-#                 if hasattr(entity, 'move'):
-#                     entity.move(key_pressed, GameUI.entities)
-
-#             self.draw()
-
-
-class MovableBox(Entity):
-    def __init__(self, position:pygame.Vector2, size:pygame.Vector2):
+class Movable(Entity):
+    def __init__(self, position: pygame.Vector2, size:Size2D, speed:int, jump_power:int):
         super().__init__(position, size)
+        self.velocity = pygame.Vector2(0, 0)
+        self.speed = speed
+        self.jump_power = jump_power
+        self.event_listener = EventListener.instance()
+        self.key_down_actions = {
+            pygame.K_d: self.move_right,
+            pygame.K_a: self.move_left,
+            pygame.K_w: self.move_jump,
+        }
+        self.key_up_actions = {
+            pygame.K_d: self.stop_right,
+            pygame.K_a: self.stop_left,
+        }
+        EventListener.instance().update(
+            pygame.KEYUP, self,
+            lambda e: self.key_up_actions.get(e.key, lambda : None)()
+        )
+        EventListener.instance().update(
+            pygame.KEYDOWN, self,
+            lambda e: self.key_down_actions.get(e.key, lambda : None)()
+        )
+
+    def move_left(self):
+        self.velocity.x = -self.speed
+    def move_right(self):
+        self.velocity.x = self.speed
+    def stop_right(self):
+        self.velocity.x = 0 if self.velocity.x > 0 else self.velocity.x
+    def stop_left(self):
+        self.velocity.x = 0 if self.velocity.x < 0 else self.velocity.x
+    def move_jump(self):
+        self.velocity.y = -self.jump_power
+
+
+
+class MovableBox(Movable):
+    def __init__(self, position:pygame.Vector2, size:pygame.Vector2, speed:int, jump_power:int):
+        super().__init__(position, size, speed, jump_power)
         self.input = True
-        self.speed = 5
-        EventListener.instance().update(pygame.KEYUP, self, self.on_key_up)
-        EventListener.instance().update(pygame.KEYDOWN, self, self.on_key_down)
-
-    def on_key_down(self, event:pygame.event.Event):
-        if event.key == pygame.K_d:
-            self.velocity.x = self.speed
-        elif event.key == pygame.K_a:
-            self.velocity.x = -self.speed
-        elif event.key == pygame.K_w:
-            self.velocity.y = -1
-        elif event.key == pygame.K_s:
-            self.velocity.y = 1
-        elif event.key == pygame.K_b:
-            self.remove = True
-
-    def on_key_up(self, event:pygame.event.Event):
-        if event.key == pygame.K_d and self.velocity.x > 0:
-            self.velocity.x = 0
-        elif event.key == pygame.K_a and self.velocity.x < 0:
-            self.velocity.x = 0
-        elif event.key == pygame.K_w:
-            self.velocity.y = 0
-        elif event.key == pygame.K_s:
-            self.velocity.y = 0
-
     def update(self):
         self.position += self.velocity
+        # Get velocity y closer to 0 each frame
+        if self.velocity.y < 0:
+            self.velocity.y *= 0.9
+            if self.velocity.y < 0 and self.velocity.y > -0.1:
+                self.velocity.y = 0
+
+        if self.velocity.y > 0:
+            self.velocity.y *= 0.9
+            if self.velocity.y > 0 and self.velocity.y < 0.1:
+                self.velocity.y = 0
 
 
 
 
-
-
-
-def main_old():
-    print("Running!")
-    ui = GameUI()
-    ui.run()
-    pygame.quit()
 
 def main():
+    print("Running!")
     game = GameEngine.instance()
     em = EntityManager.instance()
     em.add(
-        MovableBox(pygame.Vector2(40, 40), (40, 40))
+        MovableBox(pygame.Vector2(40, 300), (40, 40), 5, 10)
     )
     game.run()
 
