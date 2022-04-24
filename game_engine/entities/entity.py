@@ -1,5 +1,6 @@
 import abc
 import pygame
+from game_engine.entities.event import EventListener
 
 from game_engine.helpers import Colors, Config, IManager, Singleton, Size2D
 
@@ -21,10 +22,18 @@ class HurtBox:
     # If the two hurtboxes are overlapping, return true
     return (self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
 
+
+class IMoveable(metaclass=abc.ABCMeta):
+  @classmethod
+  def __subclasshook__(cls, subclass):
+    return (hasattr(subclass, 'move') and
+            callable(subclass.move))
+
 class Entity:
   def __init__(self, position:pygame.Vector2, size: Size2D):
     self.position = position
     self.velocity = pygame.Vector2(0, 0)
+    self.ticker = 0
     self.size = size
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)
@@ -34,7 +43,7 @@ class Entity:
     self.front_facing = True
 
     # Remove from the entity manager
-    self.remove = False
+    self._remove = False
     # If the entity has input
     self.input = False
 
@@ -45,6 +54,18 @@ class Entity:
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
     self.additional_objects = []
+
+  # Remove property
+  @property
+  def remove(self):
+    return self._remove
+
+  @remove.setter
+  def remove(self, value):
+    self._remove = value
+    if value:
+      EventListener.instance().remove(id(self))
+      EntityManager.instance().remove(id(self))
 
   def update(self):
     pass
@@ -112,10 +133,3 @@ class EntityManagerInstance(IManager[Entity]):
 @Singleton[EntityManagerInstance]
 class EntityManager(EntityManagerInstance):
     pass
-
-
-class IMoveable(metaclass=abc.ABCMeta):
-  @classmethod
-  def __subclasshook__(cls, subclass):
-    return (hasattr(subclass, 'move') and
-            callable(subclass.move))

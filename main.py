@@ -1,5 +1,6 @@
 import pygame
 from game_engine.entities.entity import Entity
+from game_engine.entities.event import EventListener
 from game_engine.helpers import Config
 
 from game_engine.engine import EntityManager, GameEngine
@@ -85,6 +86,34 @@ class MovableBox(Entity):
     def __init__(self, position:pygame.Vector2, size:pygame.Vector2):
         super().__init__(position, size)
         self.input = True
+        EventListener.instance().update(pygame.KEYDOWN, id(self), self.on_key_up)
+        EventListener.instance().update(pygame.KEYUP, id(self), self.on_key_down)
+
+    def on_key_down(self, event:pygame.event.Event):
+        if event.key == pygame.K_LEFT:
+            self.velocity.x = -10
+        elif event.key == pygame.K_RIGHT:
+            self.velocity.x = 10
+        elif event.key == pygame.K_UP:
+            self.velocity.y = -10
+        elif event.key == pygame.K_DOWN:
+            self.velocity.y = 10
+
+    def on_key_up(self, event:pygame.event.Event):
+        if event.key == pygame.K_LEFT:
+            self.velocity.x = 0
+        elif event.key == pygame.K_RIGHT:
+            self.velocity.x = 0
+        elif event.key == pygame.K_UP:
+            self.velocity.y = 0
+        elif event.key == pygame.K_DOWN:
+            self.velocity.y = 0
+
+    def update(self):
+        self.position += self.velocity
+
+
+
 
 
 

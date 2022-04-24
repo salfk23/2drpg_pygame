@@ -1,4 +1,5 @@
 import pygame
+from game_engine.entities.event import EventListener
 from game_engine.entities.entity import EntityManager
 from game_engine.helpers import Singleton
 from game_engine.renderer import Renderer
@@ -15,11 +16,8 @@ class GameEngineInstance:
         self.renderer = Renderer.instance()
         self.running = False
         # Event listener, int and function dictionary
-        self.event_listener: dict[int, dict[int, float]] = {
-            pygame.QUIT : {
-                id(self): self.stop
-            }
-        }
+        self.event_listener = EventListener.instance()
+        self.event_listener.update(pygame.QUIT, id(self), self.stop)
 
     def stop(self, event:pygame.event.Event):
         self.running = False
@@ -30,7 +28,7 @@ class GameEngineInstance:
 
         while self.running:
             for event in pygame.event.get():
-                for _, callback in self.event_listener.get(event.type, {}).items():
+                for _, callback in self.event_listener.get(event.type).items():
                     callback(event)
             for entity in self.entity_manager.get_all():
                 for near_entity in self.entity_manager.get_near(entity, 20):
