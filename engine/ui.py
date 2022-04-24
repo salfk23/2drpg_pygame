@@ -1,19 +1,18 @@
 import pygame
 from engine.entities.entity import Entity
-from engine.helpers import Colors, IManager, ObjectIdCallable, Singleton, Size2D
+from engine.helpers import Colors, Config, IConfigListener, IManager, ObjectIdCallable, Singleton, Size2D
 
 
-@Singleton
-class EntityManager(IManager[Entity]):
-    screen_dimension: Size2D = (800, 600)
 
+class EntityManagerInstance(IManager[Entity]):
     def __init__(self):
-        """Create a new EntityManager.
+        """Create a new EntityManager instance.
         Args:
             screen_size (tuple[int, int]): A tuple of the screen width and height.
         """
         self.entities: dict[int, Entity] = {}
         self.i_entities: dict[int, Entity] = {}
+        self.config = Config.instance()
 
     def get_on_screen(self):
         """Return a list of entities that are on screen.
@@ -25,7 +24,7 @@ class EntityManager(IManager[Entity]):
         return [
             entity
             for entity in self.entities.values()
-            if entity.on_screen(self.screen_dimension)
+            if entity.on_screen(self.config.screen_dimension)
         ]
 
     def get_input_entities(self):
@@ -54,17 +53,28 @@ class EntityManager(IManager[Entity]):
             del self.i_entities[id(item)]
         return self.entities.pop(id(item))
 
-    # @classmethod
-    # def instance(cls):
-    #     return cls()
+
+@Singleton[EntityManagerInstance]
+class EntityManager(EntityManagerInstance):
+    pass
 
 
-@Singleton
-class Renderer:
-    def change_renderer(self, window: pygame.surface.Surface):
-        self.window = window
-    def register_entity_manager(self, entity_manager: EntityManager):
+class RendererInstance(IConfigListener):
+    def __init__(self):
+        self.config = Config.instance()
+        self.window = pygame.display.set_mode(self.config.screen_dimension)
+        self.entity_manager = EntityManager.instance()
+        self.config.add_listener(self)
+    def on_screen_change(self):
+        self.window = pygame.display.set_mode(self.config.screen_dimension)
+    def register_entity_manager(self, entity_manager: EntityManagerInstance):
         self.entity_manager = entity_manager
+
+    def config_change_events(self):
+        return {
+            IConfigListener.SCREEN_DIMENSION:self.on_screen_change
+        }
+
     def draw(self):
         self.window.fill(Colors.WHITE)
         entities: list[Entity] = self.entity_manager.get_on_screen()
@@ -73,26 +83,19 @@ class Renderer:
             for extensive in entity.additional_objects:
                 self.window.blit(extensive, (extensive.x, extensive.y))
         pygame.display.update()
-    # @classmethod
-    # def instance(cls):
-    #     return cls()
 
-@Singleton
-class GameEngine():
+
+@Singleton[RendererInstance]
+class Renderer(RendererInstance):
+    pass
+
+class GameEngineInstance:
 
     def __init__(self):
-        self.screen_dimensions: Size2D = (800, 600)
-        EntityManager.screen_dimension = self.screen_dimensions
         pygame.init()
         pygame.display.set_caption("2D RPG Game")
         self.entity_manager = EntityManager.instance()
         self.renderer = Renderer.instance()
-        self.renderer.change_renderer(
-            pygame.display.set_mode(self.screen_dimensions),
-        )
-        self.renderer.register_entity_manager(
-            self.entity_manager
-        )
         self.running = False
         # Event listener, int and function dictionary
         self.event_listener: dict[int, dict[int, float]] = {
@@ -100,15 +103,6 @@ class GameEngine():
                 id(self): self.stop
             }
         }
-
-
-
-    def change_dimensions(self, screen_dimensions: Size2D):
-        EntityManager.screen_dimension = screen_dimensions
-        self.screen_dimensions = screen_dimensions
-        self.renderer.change_renderer(
-            pygame.display.set_mode(screen_dimensions)
-        )
 
     def stop(self, event:pygame.event.Event):
         self.running = False
@@ -129,3 +123,6 @@ class GameEngine():
             clock.tick(60)
 
 
+@Singleton[GameEngineInstance]
+class GameEngine(GameEngineInstance):
+    pass

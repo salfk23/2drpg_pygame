@@ -1,4 +1,5 @@
 import pygame
+from engine.helpers import Config
 
 from engine.ui import GameEngine
 
@@ -87,7 +88,6 @@ def main_old():
 
 def main():
     game = GameEngine.instance()
-    game.change_dimensions((800, 600))
     game.run()
 
 
