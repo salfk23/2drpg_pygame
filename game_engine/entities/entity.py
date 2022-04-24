@@ -74,7 +74,7 @@ class Entity:
     '''
     Check if entity is within screen_dimension
     '''
-    return (self.position.x >= 0 and self.position.x <= screen_dimension[0] and self.position.y >= 0 and self.position.y <= screen_dimension[1])
+    return (self.position.x+self.size[0] >= 0 and self.position.x <= screen_dimension[0] and self.position.y+self.size[1] >= 0 and self.position.y <= screen_dimension[1])
   def distance_to(self, other:'Entity'):
     return (self.position - other.position).length()
   def collision(self, near_entity):
