@@ -1,7 +1,8 @@
 import pygame
+from engine.entities.entity import Entity
 from engine.helpers import Config
 
-from engine.ui import GameEngine
+from engine.ui import EntityManager, GameEngine
 
 # from engine.entities.characters import Enemy, Player
 # from engine.entities.entity import Entity, Hurtable
@@ -88,6 +89,10 @@ def main_old():
 
 def main():
     game = GameEngine.instance()
+    em = EntityManager.instance()
+    em.add(
+        Entity(pygame.Vector2(40, 40), (40, 40))
+    )
     game.run()
 
 

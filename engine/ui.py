@@ -79,7 +79,7 @@ class RendererInstance(IConfigListener):
         self.window.fill(Colors.WHITE)
         entities: list[Entity] = self.entity_manager.get_on_screen()
         for entity in entities:
-            self.window.blit(entity.object, (entity.x, entity.y))
+            self.window.blit(entity.object, (entity.position.x, entity.position.y))
             for extensive in entity.additional_objects:
                 self.window.blit(extensive, (extensive.x, extensive.y))
         pygame.display.update()

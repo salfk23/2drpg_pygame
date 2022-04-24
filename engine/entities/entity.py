@@ -40,13 +40,24 @@ class Entity:
 
     self.name = "Entity"
     # Rectangle for collision detection
-    self.hurtbox = pygame.Rect(self.position.x, self.position.y, self.size.width, self.size.height)
+    self.hurtbox = pygame.Rect(self.position.x, self.position.y, self.size[0], self.size[1])
 
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
+    self.additional_objects = []
   def update(self):
     pass
 
+  def on_screen(self, screen_dimension:Size2D):
+    '''
+    Check if entity is within screen_dimension
+    '''
+    return (self.position.x-self.size[0] >= 0 or self.position.x <= screen_dimension[0] and
+            self.position.y-self.size[1] >= 0 or self.position.y <= screen_dimension[1])
+  def distance_to(self, other:'Entity'):
+    return 0
+  def collision(self, near_entity):
+    pass
 
 
 
