@@ -5,7 +5,7 @@ from game_engine.helpers import Singleton
 from game_engine.renderer import Renderer
 
 
-
+GAME_FPS = 60
 
 
 class GameEngineInstance:
@@ -35,7 +35,7 @@ class GameEngineInstance:
                     entity.collision(near_entity)
                 entity.update()
             self.renderer.draw()
-            clock.tick(60)
+            clock.tick(GAME_FPS)
 
 
 @Singleton[GameEngineInstance]

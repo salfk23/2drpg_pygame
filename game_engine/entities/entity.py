@@ -64,8 +64,8 @@ class Entity:
   def remove(self, value):
     self._remove = value
     if value:
-      EventListener.instance().remove(id(self))
-      EntityManager.instance().remove(id(self))
+      EventListener.instance().remove(self)
+      EntityManager.instance().remove(self)
 
   def update(self):
     pass

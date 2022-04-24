@@ -86,27 +86,30 @@ class MovableBox(Entity):
     def __init__(self, position:pygame.Vector2, size:pygame.Vector2):
         super().__init__(position, size)
         self.input = True
-        EventListener.instance().update(pygame.KEYDOWN, id(self), self.on_key_up)
-        EventListener.instance().update(pygame.KEYUP, id(self), self.on_key_down)
+        self.speed = 5
+        EventListener.instance().update(pygame.KEYUP, self, self.on_key_up)
+        EventListener.instance().update(pygame.KEYDOWN, self, self.on_key_down)
 
     def on_key_down(self, event:pygame.event.Event):
-        if event.key == pygame.K_LEFT:
-            self.velocity.x = -10
-        elif event.key == pygame.K_RIGHT:
-            self.velocity.x = 10
-        elif event.key == pygame.K_UP:
-            self.velocity.y = -10
-        elif event.key == pygame.K_DOWN:
-            self.velocity.y = 10
+        if event.key == pygame.K_d:
+            self.velocity.x = self.speed
+        elif event.key == pygame.K_a:
+            self.velocity.x = -self.speed
+        elif event.key == pygame.K_w:
+            self.velocity.y = -1
+        elif event.key == pygame.K_s:
+            self.velocity.y = 1
+        elif event.key == pygame.K_b:
+            self.remove = True
 
     def on_key_up(self, event:pygame.event.Event):
-        if event.key == pygame.K_LEFT:
+        if event.key == pygame.K_d and self.velocity.x > 0:
             self.velocity.x = 0
-        elif event.key == pygame.K_RIGHT:
+        elif event.key == pygame.K_a and self.velocity.x < 0:
             self.velocity.x = 0
-        elif event.key == pygame.K_UP:
+        elif event.key == pygame.K_w:
             self.velocity.y = 0
-        elif event.key == pygame.K_DOWN:
+        elif event.key == pygame.K_s:
             self.velocity.y = 0
 
     def update(self):
