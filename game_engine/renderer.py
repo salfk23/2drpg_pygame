@@ -22,9 +22,9 @@ class RendererInstance(IConfigListener):
     def draw(self):
         self.window.fill(Colors.WHITE)
         for entity in self.entity_manager.get_on_screen():
-            self.window.blit(entity.object, (entity.position.x, entity.position.y))
+            self.window.blit(entity.object, entity.position)
             for extensive in entity.additional_objects:
-                self.window.blit(extensive, (extensive.x, extensive.y))
+                self.window.blit(extensive, extensive.position)
         pygame.display.update()
 
 
