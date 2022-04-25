@@ -21,7 +21,19 @@ class Entity:
 
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)
-    self.sprite.fill(Colors.GREEN)
+    self._color = Colors.GREEN
+    self.sprite.fill(self._color)
+    self.object = pygame.transform.rotate(
+      pygame.transform.scale(self.sprite, self.size), 0)
+
+  @property
+  def color(self):
+    return self._color
+
+  @color.setter
+  def color(self, color:tuple[int, int, int]):
+    self._color = color
+    self.sprite.fill(color)
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
 
@@ -55,22 +67,26 @@ class Entity:
     '''
     return (self._position.x+self.size[0] >= 0 and self._position.x <= screen_dimension[0] and self._position.y+self.size[1] >= 0 and self._position.y <= screen_dimension[1])
   def distance_to(self, other:'Entity'):
-    return (self._position - other._position).length()
+    pos = (self.position - other.position).length()
+    print(pos)
+    return pos
 
   def on_collision(self, other:'Entity', collision_type:tuple[bool, bool, bool, bool]):
     pass
 
   def collision(self, near_entity:'Entity'):
     '''
-    Check if entity is colliding with other entity
+    Check if entity is colliding with other, and if so, where
+    did it collide.
     '''
     if self.coll_square.colliderect(near_entity.coll_square):
-      self.on_collision(near_entity, (
-        self.coll_square.colliderect(near_entity.coll_square, 0),
-        self.coll_square.colliderect(near_entity.coll_square, 1),
-        self.coll_square.colliderect(near_entity.coll_square, 2),
-        self.coll_square.colliderect(near_entity.coll_square, 3)
-      ))
+      print(self.coll_square.center, near_entity.coll_square.center)
+      # self.on_collision(near_entity, (
+      #   self.coll_square.left < near_entity.coll_square.right,
+      #   self.coll_square.right > near_entity.coll_square.left,
+      #   self.coll_square.top < near_entity.coll_square.bottom,
+      #   self.coll_square.bottom > near_entity.coll_square.top,
+      # ))
 
 
 
@@ -101,7 +117,8 @@ class EntityManagerInstance(IManager[Entity]):
         return [
             item
             for item in self.entities.values()
-            if item.distance_to(entity) < radius
+            if item != entity
+            # and item.distance_to(entity) <= radius
         ]
 
     def get_all(self):
