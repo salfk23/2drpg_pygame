@@ -57,7 +57,7 @@ class Entity:
   def distance_to(self, other:'Entity'):
     return (self._position - other._position).length()
 
-  def on_collision(self, other:'Entity', collision_type:tuple(bool, bool, bool, bool)):
+  def on_collision(self, other:'Entity', collision_type:tuple[bool, bool, bool, bool]):
     pass
 
   def collision(self, near_entity:'Entity'):
