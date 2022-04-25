@@ -1,11 +1,11 @@
-import pygame
 from typing import Callable
 from game_engine.helpers import Singleton
 
 
 PyGame_EventType = int
+PyGame_EventKey = int
 # Make a lambda with 2 parameters
-EmptyCallback = lambda event: None
+EmptyCallback = lambda: None
 class EventListenerInstance:
     def __init__(self):
         self.event_listener: dict[PyGame_EventType, dict[int, Callable]] = {}
@@ -50,3 +50,14 @@ class EventListenerInstance:
 @Singleton[EventListenerInstance]
 class EventListener(EventListenerInstance):
     pass
+class KeyEventRegister:
+    def __init__(self):
+        self.actions: dict[PyGame_EventType, dict[PyGame_EventKey, Callable]] = {}
+    def register_actions(self):
+        # Remove all existing actions
+        eventListener = EventListener.instance()
+        eventListener.remove(self)
+        for event_type in self.action_set():
+            eventListener.update(event_type, self, lambda e: self.actions.get(e.type, {}).get(e.key, EmptyCallback)())
+    def action_set(self):
+        raise NotImplementedError("KeyEventRegister.action_set() must be implemented")
