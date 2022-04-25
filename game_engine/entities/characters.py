@@ -2,10 +2,10 @@
 from typing import Sequence
 import pygame
 
-from game_engine.entities.entity import NORMAL_SIZE_ENTITY, Entity, HurtBox, Hurtable, IMoveable
+from game_engine.entities.entity import NORMAL_SIZE_ENTITY, Entity
+from game_engine.entities.state import HurtBox, Hurtable
 
-
-class Player(Entity, Hurtable, IMoveable):
+class Player(Entity, Hurtable, HurtBox):
   def __init__(self, x:int, y:int):
     super().__init__(x, y, NORMAL_SIZE_ENTITY[0], NORMAL_SIZE_ENTITY[1], pygame.image.load("assets/player.png"))
     Hurtable.__init__(self, 100, 100)
@@ -46,7 +46,7 @@ class Player(Entity, Hurtable, IMoveable):
 
 
 
-class Enemy(Entity, Hurtable, IMoveable):
+class Enemy(Entity, Hurtable):
   def __init__(self, x:int, y:int):
     super().__init__(x, y, NORMAL_SIZE_ENTITY[0], NORMAL_SIZE_ENTITY[1], pygame.image.load("assets/enemy.png"))
     Hurtable.__init__(self, 100, 100)
