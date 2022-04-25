@@ -6,52 +6,33 @@ from game_engine.helpers import Colors, Config, IManager, Singleton, Size2D
 
 
 NORMAL_SIZE_ENTITY = (32, 52)
-class Hurtable:
-  def __init__(self, health: int, max_health: int):
-    self.health = health
-    self.max_health = max_health
-
-class HurtBox:
-  def __init__(self, x1: int, y1: int, x2: int, y2: int):
-    self.x1 = x1
-    self.y1 = y1
-    self.x2 = x2
-    self.y2 = y2
-
-  def conflict(self, other:'HurtBox'):
-    # If the two hurtboxes are overlapping, return true
-    return (self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
-
-
-class IMoveable(metaclass=abc.ABCMeta):
-  @classmethod
-  def __subclasshook__(cls, subclass):
-    return (hasattr(subclass, 'move') and
-            callable(subclass.move))
-
 class Entity:
   def __init__(self, position:pygame.Vector2, size: Size2D):
-    self.position = position
+    self._position = position
     self.size = size
+    # Remove from the entity manager
+    self._remove = False
+    self.name = "Entity"
+    # Rectangle for collision detection
+    self.coll_square:pygame.Rect = pygame.Rect(self.position, self.size)
+    # Give color to Rect
+
+    self.additional_objects = []
+
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)
     self.sprite.fill(Colors.GREEN)
-
-    # Facing right
-    self.front_facing = True
-
-    # Remove from the entity manager
-    self._remove = False
-    # If the entity has input
-    self.input = False
-
-    self.name = "Entity"
-    # Rectangle for collision detection
-    self.hurtbox = pygame.Rect(self.position.x, self.position.y, self.size[0], self.size[1])
-
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
-    self.additional_objects = []
+
+  @property
+  def position(self):
+    return self._position
+  @position.setter
+  def position(self, value:pygame.Vector2):
+    self._position = value
+    self.coll_square.topleft = value
+
 
   # Remove property
   @property
@@ -72,11 +53,26 @@ class Entity:
     '''
     Check if entity is within screen_dimension
     '''
-    return (self.position.x+self.size[0] >= 0 and self.position.x <= screen_dimension[0] and self.position.y+self.size[1] >= 0 and self.position.y <= screen_dimension[1])
+    return (self._position.x+self.size[0] >= 0 and self._position.x <= screen_dimension[0] and self._position.y+self.size[1] >= 0 and self._position.y <= screen_dimension[1])
   def distance_to(self, other:'Entity'):
-    return (self.position - other.position).length()
-  def collision(self, near_entity):
+    return (self._position - other._position).length()
+
+  def on_collision(self, other:'Entity', collision_type:tuple(bool, bool, bool, bool)):
     pass
+
+  def collision(self, near_entity:'Entity'):
+    '''
+    Check if entity is colliding with other entity
+    '''
+    if self.coll_square.colliderect(near_entity.coll_square):
+      self.on_collision(near_entity, (
+        self.coll_square.colliderect(near_entity.coll_square, 0),
+        self.coll_square.colliderect(near_entity.coll_square, 1),
+        self.coll_square.colliderect(near_entity.coll_square, 2),
+        self.coll_square.colliderect(near_entity.coll_square, 3)
+      ))
+
+
 
 
 class EntityManagerInstance(IManager[Entity]):
@@ -86,7 +82,6 @@ class EntityManagerInstance(IManager[Entity]):
             screen_size (tuple[int, int]): A tuple of the screen width and height.
         """
         self.entities: dict[int, Entity] = {}
-        self.i_entities: dict[int, Entity] = {}
         self.config = Config.instance()
 
     def get_on_screen(self):
@@ -102,10 +97,6 @@ class EntityManagerInstance(IManager[Entity]):
             if entity.on_screen(self.config.screen_dimension)
         ]
 
-    def get_input_entities(self):
-        values: list[Entity] = self.i_entities.values()
-        return values
-
     def get_near(self, entity: Entity, radius: int):
         return [
             item
@@ -119,13 +110,9 @@ class EntityManagerInstance(IManager[Entity]):
 
     def add(self, item: Entity):
         self.entities[id(item)] = item
-        if item.input:
-            self.i_entities[id(item)] = item
 
 
     def remove(self, item: Entity):
-        if item in self.i_entities.values():
-            del self.i_entities[id(item)]
         return self.entities.pop(id(item))
 
 @Singleton[EntityManagerInstance]
