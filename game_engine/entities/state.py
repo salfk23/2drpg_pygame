@@ -10,3 +10,6 @@ class HurtBox:
     self.y1 = y1
     self.x2 = x2
     self.y2 = y2
+
+class Solid:
+  pass
