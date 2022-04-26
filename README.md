@@ -12,6 +12,7 @@ typing (Type Hinting) (Built-in)
 Press A, D to move left and right.
 Press W to jump.
 Press S to suicide.
+Press F to attack.
 Press Space to attack. (In development)
 
 

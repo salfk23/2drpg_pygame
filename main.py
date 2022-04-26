@@ -11,7 +11,7 @@ import game_engine.helpers as helpers
 player_image = helpers.load_image("assets\player.png")
 death_sound = helpers.load_sound("assets\death.ogg")
 
-class MovableBox(Character, ColoredEntity):
+class MovableBox(Enemy, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
 
@@ -21,6 +21,7 @@ class MovableBox(Character, ColoredEntity):
                 pygame.K_a: self.move_left,
                 pygame.K_w: self.move_jump,
                 pygame.K_s: self.hurt,
+                pygame.K_f: self.attack,
             },
             pygame.KEYUP:  {
                 pygame.K_d: self.stop_right,
@@ -28,10 +29,11 @@ class MovableBox(Character, ColoredEntity):
             }
         }
 
-
+    def attack(self):
+        self.weapon.attacking = True
 
     def hurt(self):
-        self.health -= 10
+        self.health -= 100
 
 
     def on_color_change(self):

@@ -6,7 +6,8 @@ from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 from game_engine.entities.entity import NORMAL_SIZE_ENTITY, BiDirectionalEntity, Entity
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
-from game_engine.helpers import Colors, Size2D
+from game_engine.entities.weapon import Weapon
+from game_engine.helpers import Colors, Size2D, load_image
 
 
 
@@ -60,12 +61,17 @@ class Character(ControllableEntity, BiDirectionalEntity, Hurtable, AffectedByGra
       self.direction = True
     elif self.velocity.x < 0:
       self.direction = False
-
+stick_image = load_image("assets/stick.png")
 class Enemy(Character):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
       Character.__init__(self, image, position, size, speed, jump_power)
       self.health_bar = Healthbar(pygame.Vector2(50, 10))
+      # stick = Weapon(stick_image, (10, 50), 1, 1)
+      # stick.fill(Colors.RED)
+      stick = pygame.transform.rotate(stick_image, -10)
+      self.weapon = Weapon(stick, (10, 50), 10, 10)
       self.linked.append(self.health_bar)
+      self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
   def on_position_change(self):
@@ -73,7 +79,13 @@ class Enemy(Character):
       health_bar_rect = self.health_bar.rect
       health_bar_rect.center = self.rect.center
       health_bar_rect.top = self.rect.top - health_bar_rect.height - 10
+      weapon_rect = self.weapon.rect
+      if self.direction:
+        weapon_rect.bottomright = self.rect.midright
+      else:
+        weapon_rect.bottomleft = self.rect.midleft
       self.health_bar.position = health_bar_rect.topleft
+      self.weapon.position = weapon_rect.topleft
   def on_health_change(self):
       super().on_health_change()
       self.health_bar.max_health = self.max_health
