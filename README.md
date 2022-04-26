@@ -11,7 +11,7 @@ typing (Type Hinting) (Built-in)
 ## How to play:
 Press A, D to move left and right.
 Press W to jump.
-Press S to crouch. (Not implemented yet)
+Press S to suicide.
 Press Space to attack. (In development)
 
 
