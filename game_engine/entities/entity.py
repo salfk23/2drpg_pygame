@@ -36,6 +36,8 @@ class Entity:
     self.object = pygame.transform.rotate(
       pygame.transform.scale(sprite, self.size), 0)
 
+    self.linked: list[Entity] = []
+
   def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
     '''
     Calculate the new position of the entity
@@ -93,6 +95,8 @@ class Entity:
       if em.focused_entity == self:
         em.focused_entity = None
       em.remove(self)
+      for linked in self.linked:
+        linked.remove = True
 
   def update(self):
     pass
@@ -181,6 +185,8 @@ class EntityManagerInstance(IManager[Entity]):
 
     def add(self, item: Entity):
         self.entities[id(item)] = item
+        for linked in item.linked:
+            self.add(linked)
 
 
     def remove(self, item: Entity):
