@@ -6,6 +6,22 @@ from game_engine.helpers import Colors, Config, IManager, Singleton, Size2D
 
 NORMAL_SIZE_ENTITY = (32, 52)
 
+class ColoredEntity:
+  def __init__(self):
+      self._color = Colors.BLUE
+
+  def on_color_change(self):
+    raise NotImplementedError()
+
+  @property
+  def color(self):
+    return self._color
+
+  @color.setter
+  def color(self, color:tuple[int, int, int]):
+    self._color = color
+    self.on_color_change()
+
 
 
 class Entity:
@@ -23,8 +39,6 @@ class Entity:
 
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)
-    self._color = Colors.GREEN
-    self.sprite.fill(self._color)
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
 
@@ -50,17 +64,6 @@ class Entity:
         if self.coll_square.bottom - near.coll_square.top > 2:
           new_position.y = near.coll_square.top - self.size[1] +1
     return new_position, (up, down, left, right)
-
-  @property
-  def color(self):
-    return self._color
-
-  @color.setter
-  def color(self, color:tuple[int, int, int]):
-    self._color = color
-    self.sprite.fill(color)
-    self.object = pygame.transform.rotate(
-      pygame.transform.scale(self.sprite, self.size), 0)
 
   @property
   def position(self):

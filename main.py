@@ -1,13 +1,17 @@
 import pygame
 from game_engine.engine import EntityManager, GameEngine
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
-from game_engine.entities.entity import Entity
+from game_engine.entities.entity import ColoredEntity, Entity
 from game_engine.entities.state import Solid
 from game_engine.helpers import Colors, Direction, Size2D
 import game_engine.helpers as helpers
 
 
-class MovableBox(ControllableEntity, AffectedByGravity, Solid):
+class MovableBox(ControllableEntity, AffectedByGravity, ColoredEntity, Solid):
+
+    def on_color_change(self):
+        self.sprite.fill(self.color)
+        self.object = pygame.transform.scale(self.sprite, self.size)
 
     def update(self):
         AffectedByGravity.update(self)
@@ -78,12 +82,12 @@ def main():
     ground.name = "Tile"
 
     wall = Tile(pygame.Vector2(20, 400), (200, 70))
+    mb = MovableBox(pygame.Vector2(220, 390), (40, 40), 5, 10)
+    mb.color = Colors.BLUE
     wall.name = "Tile 2"
     em.add(ground)
     em.add(wall)
-    em.add(
-        MovableBox(pygame.Vector2(220, 390), (40, 40), 5, 10)
-    )
+    em.add(mb)
     fm = FollowingMouse(pygame.Vector2(50, 50), (10, 10))
     fm.name = "FollowingMouse"
     # em.add(fm)
