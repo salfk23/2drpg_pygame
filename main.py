@@ -1,6 +1,6 @@
 import pygame
 from game_engine.engine import EntityManager, GameEngine
-from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
+from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity, MovableEntity
 from game_engine.entities.entity import ColoredEntity, Entity
 from game_engine.entities.state import Solid
 from game_engine.helpers import Colors, Direction, Size2D
@@ -15,47 +15,23 @@ class MovableBox(ControllableEntity, AffectedByGravity, ColoredEntity, Solid):
 
     def update(self):
         AffectedByGravity.update(self)
-        new_position = self.position + self.velocity
+        MovableEntity.update(self)
         old_y = self.position.y
-        new_position, (up, down, left, right) = self.calculate_position(self.position, new_position)
+        new_position, (up, down, left, right) = self.calculate_position(self.position, self.new_position)
+
 
         if down:
             self.velocity.y = 0
+            self.color = Colors.GREEN
+        if up:
+            self.velocity.y = 0
+            self.color = Colors.PURPLE
+        if left:
+            self.color = Colors.RED
+        if right:
+            self.color = Colors.YELLOW
         self.position = new_position
-        print(self.position.y, old_y)
-        # Get velocity y closer to 0 each frame
-        # if self.velocity.y < 0:
-        #     self.velocity.y *= 0.9
-        #     if self.velocity.y < 0 and self.velocity.y > -0.1:
-        #         self.velocity.y = 0
 
-        # if self.velocity.y > 0:
-        #     self.velocity.y *= 0.9
-        #     if self.velocity.y > 0 and self.velocity.y < 0.1:
-        #         self.velocity.y = 0
-
-
-    def on_collision(self, other: Entity, collision_direction: int):
-        # If entity is instance of AffectedByGravity
-        if (self.name == "Entity" and other.name == "FollowingMouse"):
-            print("Tile")
-            print("UP" if collision_direction == Direction.UP else "DOWN" if collision_direction == Direction.DOWN else "LEFT" if collision_direction == Direction.LEFT else "RIGHT")
-        if isinstance(other, Solid):
-            if collision_direction == Direction.DOWN and self.velocity.y > 0:
-                self.velocity.y = 0
-                self.position.y = other.position.y - self.size[1]+1
-                # Change this entity color to red
-                self.color = Colors.RED
-            if collision_direction == Direction.UP and self.velocity.y < 0:
-                self.velocity.y = 0
-                self.position.y = other.position.y + other.size[1]
-                self.color = Colors.GREEN
-            if collision_direction == Direction.LEFT and self.velocity.x < 0:
-                self.velocity.x = 0
-                self.color = Colors.BLUE
-            if collision_direction == Direction.RIGHT and self.velocity.x > 0:
-                self.velocity.x = 0
-                self.color = Colors.YELLOW
 
 
 

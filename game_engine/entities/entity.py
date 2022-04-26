@@ -54,13 +54,19 @@ class Entity:
           ((t_up or t_down) and t_left and new_position.x < old_position.x)):
         if (t_up and (near.coll_square.bottom - new_position.y) > 2) or (t_down and (new_position.y - near.coll_square.top) > 2):
           new_position.x = old_position.x
-        print('Collision X')
+          if t_right:
+            right = True
+
+          if t_left:
+            left = True
       if (((t_left or t_right) and t_up and new_position.y < old_position.y) or
           ((t_left or t_right) and t_down and new_position.y > old_position.y)):
         new_position.y = old_position.y
-        print('Collision Y')
         # if near.coll_square.top < new_position.y:
-        down = True
+        if t_down:
+          down = True
+        if t_up:
+          up = True
         if self.coll_square.bottom - near.coll_square.top > 2:
           new_position.y = near.coll_square.top - self.size[1] +1
     return new_position, (up, down, left, right)

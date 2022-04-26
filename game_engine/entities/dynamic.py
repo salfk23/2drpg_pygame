@@ -11,7 +11,7 @@ class MovableEntity(Entity):
         self.new_position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
     def update(self):
-        self.new_position += self.velocity
+        self.new_position = self.position + self.velocity
 
 class AffectedByGravity(MovableEntity):
     GRAVITY_MODIFIER = 0.5
