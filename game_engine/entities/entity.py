@@ -188,13 +188,11 @@ class EntityManagerInstance(IManager[Entity]):
         """
         self._entities: dict[int, Entity] = {}
         self._remove_list: list[Entity] = []
+        self._add_list: list[Entity] = []
         self.config = Config.instance()
         self.focused_entity:Entity = None
     @property
     def entities(self):
-        for entity in self._remove_list:
-            del self._entities[id(entity)]
-        self._remove_list = []
         return self._entities
 
     @property
@@ -203,6 +201,14 @@ class EntityManagerInstance(IManager[Entity]):
             return pygame.Vector2(self.focused_entity.rect.center)
         return pygame.Vector2(self.config.screen_dimension)//2
 
+
+    def commit(self):
+        for entity in self._remove_list:
+            del self._entities[id(entity)]
+        self._remove_list.clear()
+        for entity in self._add_list:
+            self._entities[id(entity)] = entity
+        self._add_list.clear()
 
     def get_on_screen(self):
         """Return a list of entities that are on screen.
@@ -230,7 +236,7 @@ class EntityManagerInstance(IManager[Entity]):
         return values
 
     def add(self, item: Entity):
-        self.entities[id(item)] = item
+        self._add_list.append(item)
         for linked in item.linked:
             self.add(linked)
 

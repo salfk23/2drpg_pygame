@@ -34,6 +34,7 @@ class GameEngineInstance:
             for entity in self.entity_manager.get_all():
                 entity.update()
             self.renderer.draw()
+            self.entity_manager.commit()
             clock.tick(GAME_FPS)
 
 

@@ -9,6 +9,7 @@ from game_engine.helpers import Colors, Direction, Size2D
 import game_engine.helpers as helpers
 
 player_image = helpers.load_image("assets\player.png")
+death_sound = helpers.load_sound("assets\death.ogg")
 
 class MovableBox(Character, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
@@ -54,7 +55,16 @@ class MovableBox(Character, ColoredEntity):
         if right:
             self.color = Colors.YELLOW
         self.position = new_position
+        if self.position.y > 5000:
+            self.die()
 
+    def die(self):
+            center = self.rect.center
+            ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.RED, (2, 10), (0.1, 3))
+            ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.YELLOW, (2, 10), (0.1, 3))
+            ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.GREEN, (2, 10), (0.1, 3))
+            death_sound.play()
+            self.remove = True
 
 class MovableBox2(Enemy, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):

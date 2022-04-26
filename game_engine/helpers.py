@@ -155,3 +155,15 @@ def load_image(path: str, colorkey: tuple = None):
     if colorkey is not None:
         surface.set_colorkey(colorkey)
     return surface
+
+def load_sound(path: str):
+    """Load a sound from a path.
+
+    Args:
+        path (str): The path to the sound.
+
+    Returns:
+        pygame.mixer.Sound: The loaded sound.
+    """
+    pygame.mixer.init()
+    return pygame.mixer.Sound(path)
