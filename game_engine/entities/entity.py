@@ -1,11 +1,13 @@
-import abc
 import pygame
 from game_engine.entities.event import EventListener
-
 from game_engine.helpers import Colors, Config, IManager, Singleton, Size2D
 
 
+
 NORMAL_SIZE_ENTITY = (32, 52)
+
+
+
 class Entity:
   def __init__(self, position:pygame.Vector2, size: Size2D):
     self._position = position
@@ -25,6 +27,29 @@ class Entity:
     self.sprite.fill(self._color)
     self.object = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
+
+  def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
+    '''
+    Calculate the new position of the entity
+    '''
+    nears = EntityManager.instance().get_near(self, 50)
+    up, down, left, right = False, False, False, False
+    for near in nears:
+      t_up, t_down, t_left, t_right, bias_x, bias_y = self.collision(near)
+      if (((t_up or t_down) and t_right and new_position.x > old_position.x) or
+          ((t_up or t_down) and t_left and new_position.x < old_position.x)):
+        if (t_up and (near.coll_square.bottom - new_position.y) > 2) or (t_down and (new_position.y - near.coll_square.top) > 2):
+          new_position.x = old_position.x
+        print('Collision X')
+      if (((t_left or t_right) and t_up and new_position.y < old_position.y) or
+          ((t_left or t_right) and t_down and new_position.y > old_position.y)):
+        new_position.y = old_position.y
+        print('Collision Y')
+        # if near.coll_square.top < new_position.y:
+        down = True
+        if self.coll_square.bottom - near.coll_square.top > 2:
+          new_position.y = near.coll_square.top - self.size[1] +1
+    return new_position, (up, down, left, right)
 
   @property
   def color(self):
@@ -71,22 +96,30 @@ class Entity:
     print(pos)
     return pos
 
-  def on_collision(self, other:'Entity', collision_type:tuple[bool, bool, bool, bool]):
-    pass
-
-  def collision(self, near_entity:'Entity'):
+  def collision(self, other:'Entity'):
     '''
     Check if entity is colliding with other, and if so, where
     did it collide.
     '''
-    if self.coll_square.colliderect(near_entity.coll_square):
-      print(self.coll_square.center, near_entity.coll_square.center)
-      # self.on_collision(near_entity, (
-      #   self.coll_square.left < near_entity.coll_square.right,
-      #   self.coll_square.right > near_entity.coll_square.left,
-      #   self.coll_square.top < near_entity.coll_square.bottom,
-      #   self.coll_square.bottom > near_entity.coll_square.top,
-      # ))
+    is_within_left = self.coll_square.left > other.coll_square.left and self.coll_square.left < other.coll_square.right
+    is_within_right = self.coll_square.right > other.coll_square.left and self.coll_square.right < other.coll_square.right
+    is_within_top = self.coll_square.top > other.coll_square.top and self.coll_square.top < other.coll_square.bottom
+    is_within_bottom = self.coll_square.bottom > other.coll_square.top and self.coll_square.bottom < other.coll_square.bottom
+    bias_x = other.coll_square.centerx - self.coll_square.centerx
+    bias_y = other.coll_square.centery - self.coll_square.centery
+
+    return is_within_top, is_within_bottom, is_within_left, is_within_right, bias_x, bias_y
+
+
+
+
+
+
+
+
+
+
+      # self.on_collision(other, direction)
 
 
 

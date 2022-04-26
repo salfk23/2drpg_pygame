@@ -32,8 +32,6 @@ class GameEngineInstance:
                 for _, callback in self.event_listener.get(event.type).items():
                     callback(event)
             for entity in self.entity_manager.get_all():
-                for near_entity in self.entity_manager.get_near(entity, 20):
-                    entity.collision(near_entity)
                 entity.update()
             self.renderer.draw()
             clock.tick(GAME_FPS)

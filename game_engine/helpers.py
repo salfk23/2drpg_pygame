@@ -12,7 +12,12 @@ ObjectIdCallable = dict[int, callable]
 The key is an object's id, and the value is said object's method (as callable)
 """
 
-
+# Enum of directions
+class Direction:
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
 
 class Colors:
     BLACK = (0, 0, 0)
