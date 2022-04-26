@@ -50,14 +50,3 @@ class EventListenerInstance:
 @Singleton[EventListenerInstance]
 class EventListener(EventListenerInstance):
     pass
-class KeyEventRegister:
-    def __init__(self):
-        self.actions: dict[PyGame_EventType, dict[PyGame_EventKey, Callable]] = {}
-    def register_actions(self):
-        # Remove all existing actions
-        eventListener = EventListener.instance()
-        eventListener.remove(self)
-        for event_type in self.action_set():
-            eventListener.update(event_type, self, lambda e: self.actions.get(e.type, {}).get(e.key, EmptyCallback)())
-    def action_set(self):
-        raise NotImplementedError("KeyEventRegister.action_set() must be implemented")

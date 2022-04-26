@@ -1,40 +1,51 @@
+from typing import Callable
 import pygame
 from game_engine.entities.entity import Entity
-from game_engine.entities.event import EventListener, KeyEventRegister
+from game_engine.entities.event import EmptyCallback, EventListener
 from game_engine.helpers import Size2D
 
 
 class MovableEntity(Entity):
+    def __init__(self, position: pygame.Vector2, size: Size2D):
+        super().__init__(position, size)
+        self.new_position = pygame.Vector2(position)
+        self.velocity = pygame.Vector2(0, 0)
     def update(self):
-        self.position += self.velocity
+        self.new_position += self.velocity
 
-class AffectedByGravity(Entity):
+class AffectedByGravity(MovableEntity):
     GRAVITY_MODIFIER = 0.5
     def update(self):
         self.velocity.y += self.GRAVITY_MODIFIER
 
-class ControllableEntity(MovableEntity, KeyEventRegister):
+class ControllableEntity(MovableEntity):
     def __init__(self, position: pygame.Vector2, size:Size2D, speed:int, jump_power:int):
         super().__init__(position, size)
-        KeyEventRegister.__init__(self)
-        self.velocity = pygame.Vector2(0, 0)
         self.speed = speed
         self.jump_power = jump_power
-        self.event_listener = EventListener.instance()
-        self.change_keybind(pygame.K_d, pygame.K_a, pygame.K_w)
-    def change_keybind(self, move_right:int, move_left:int, jump:int):
-        self.actions[pygame.KEYDOWN] = {
-            move_right: self.move_right,
-            move_left: self.move_left,
-            jump: self.move_jump,
+        self._actions: dict[id, dict[id, Callable]] = {}
+        self.actions = {
+            pygame.KEYDOWN : {
+                pygame.K_d: self.move_right,
+                pygame.K_a: self.move_left,
+                pygame.K_w: self.move_jump,
+            },
+            pygame.KEYUP:  {
+                pygame.K_d: self.stop_right,
+                pygame.K_a: self.stop_left,
+            }
         }
-        self.actions[pygame.KEYUP] = {
-            move_right: self.stop_right,
-            move_left: self.stop_left,
-        }
-        self.register_actions()
-    def action_set(self):
-        return self.actions
+    @property
+    def actions(self):
+        return self._actions
+    @actions.setter
+    def actions(self, actions: dict[id, dict[id, Callable]]):
+        self._actions = actions
+        eventListener = EventListener.instance()
+        eventListener.remove(self)
+        for event_type in self.actions:
+            eventListener.update(event_type, self, lambda e: self.actions.get(e.type, {}).get(e.key, EmptyCallback)())
+
 
     def move_left(self):
         self.velocity.x = -self.speed
