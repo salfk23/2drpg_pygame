@@ -33,7 +33,7 @@ class RendererInstance(IConfigListener):
         on_screen = self.entity_manager.get_on_screen()
         on_screen.reverse()
         for entity in on_screen:
-            self.window.blit(entity.object, entity.position+offset)
+            self.window.blit(entity.sprite, entity.position+offset)
         pygame.display.update()
 
 

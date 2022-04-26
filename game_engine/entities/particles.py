@@ -25,7 +25,7 @@ class ExplosionParticle(MovableEntity, ColoredEntity):
   def on_color_change(self):
       sprite = pygame.Surface(self.size)
       sprite.fill(self.color)
-      self.object = pygame.transform.scale(sprite, self.size)
+      self.sprite = pygame.transform.scale(sprite, self.size)
 
   def update(self):
       super().update()

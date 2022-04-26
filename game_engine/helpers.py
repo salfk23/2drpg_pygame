@@ -1,6 +1,8 @@
 import abc
 from typing import Generic, TypeVar
 
+import pygame
+
 
 Size2D = tuple[int, int]
 """Screen size tuple
@@ -138,3 +140,18 @@ class ConfigInstance:
 @Singleton[ConfigInstance]
 class Config(ConfigInstance):
     pass
+
+def load_image(path: str, colorkey: tuple = None):
+    """Load an image from a path.
+
+    Args:
+        path (str): The path to the image.
+        colorkey (tuple, optional): The colorkey to use. Defaults to None.
+
+    Returns:
+        pygame.Surface: The loaded image.
+    """
+    surface = pygame.image.load(path)
+    if colorkey is not None:
+        surface.set_colorkey(colorkey)
+    return surface

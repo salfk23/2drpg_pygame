@@ -8,10 +8,11 @@ from game_engine.entities.state import Solid
 from game_engine.helpers import Colors, Direction, Size2D
 import game_engine.helpers as helpers
 
+player_image = helpers.load_image("assets\player.png")
 
-class MovableBox(Enemy, ColoredEntity):
+class MovableBox(Character, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
-        super().__init__(position, size, speed, jump_power)
+        super().__init__(player_image, position, size, speed, jump_power)
 
         self.actions = {
             pygame.KEYDOWN : {
@@ -26,7 +27,7 @@ class MovableBox(Enemy, ColoredEntity):
             }
         }
 
-    
+
 
     def hurt(self):
         self.health -= 10
@@ -39,7 +40,7 @@ class MovableBox(Enemy, ColoredEntity):
 
     def update(self):
         super().update()
-        new_position, (up, down, left, right) = self.calculate_position(self.position, self.new_position)
+        new_position, (up, down, left, right), dirs = self.calculate_position(self.position, self.new_position)
 
 
         if down:
@@ -57,7 +58,7 @@ class MovableBox(Enemy, ColoredEntity):
 
 class MovableBox2(Enemy, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
-        super().__init__(position, size, speed, jump_power)
+        super().__init__(player_image, position, size, speed, jump_power)
 
         self.actions = {
             pygame.KEYDOWN : {
@@ -78,7 +79,7 @@ class MovableBox2(Enemy, ColoredEntity):
 
     def update(self):
         super().update()
-        new_position, (up, down, left, right) = self.calculate_position(self.position, self.new_position)
+        new_position, (up, down, left, right), dirs = self.calculate_position(self.position, self.new_position)
 
 
         if down:

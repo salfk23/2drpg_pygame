@@ -1,7 +1,7 @@
 import pygame
 from game_engine.entities.event import EventListener
 from game_engine.entities.state import Solid
-from game_engine.helpers import Colors, Config, IManager, Singleton, Size2D
+from game_engine.helpers import Colors, Config, Direction, IManager, Singleton, Size2D
 
 
 
@@ -34,24 +34,40 @@ class Entity:
     self.name = "Entity"
     # Make a rectangle with color green
     sprite = pygame.Surface(size)
-    self.object = pygame.transform.rotate(
+    self._sprite = pygame.transform.rotate(
       pygame.transform.scale(sprite, self.size), 0)
 
     self.linked: list[Entity] = []
+
+  @property
+  def sprite(self):
+    return self._sprite
+
+  @sprite.setter
+  def sprite(self, sprite:pygame.Surface):
+    self._sprite = sprite
+
+
   @property
   def size(self):
     return self._size
   @size.setter
   def size(self, size:Size2D):
     self._size = size
-    self.object = pygame.transform.rotate(
-      pygame.transform.scale(self.object, self.size), 0)
+    self.sprite = pygame.transform.rotate(
+      pygame.transform.scale(self.sprite, self.size), 0)
   def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
     '''
     Calculate the new position of the entity
     '''
     nears = EntityManager.instance().get_near(self, 50)
     up, down, left, right = False, False, False, False
+    collided: dict[int, list[Entity]] = {
+      Direction.UP: [],
+      Direction.DOWN: [],
+      Direction.LEFT: [],
+      Direction.RIGHT: []
+    }
     for near in nears:
       t_up, t_down, t_left, t_right, bias_x, bias_y = self.collision(near)
       if (((t_up or t_down) and t_right and new_position.x > old_position.x) or
@@ -60,20 +76,24 @@ class Entity:
           new_position.x = old_position.x
           if t_right:
             right = True
+            collided[Direction.DOWN].append(near)
 
           if t_left:
             left = True
+            collided[Direction.LEFT].append(near)
       if (((t_left or t_right) and t_up and new_position.y < old_position.y) or
           ((t_left or t_right) and t_down and new_position.y > old_position.y)):
         new_position.y = old_position.y
         # if near.coll_square.top < new_position.y:
         if t_down:
           down = True
+          collided[Direction.DOWN].append(near)
         if t_up:
           up = True
+          collided[Direction.UP].append(near)
         if self.rect.bottom - near.rect.top > 2:
           new_position.y = near.rect.top - self.size[1] +1
-    return new_position, (up, down, left, right)
+    return new_position, (up, down, left, right), collided
 
   def on_position_change(self):
     pass
@@ -139,17 +159,26 @@ class Entity:
 
 
 
+class BiDirectionalEntity:
+  def __init__(self, sprite:pygame.Surface):
+    self.sprites = {
+      True: sprite,
+      False: pygame.transform.flip(sprite, True, False)
+    }
+    self._direction = True
 
+  def on_direction_change(self):
+    raise NotImplementedError()
 
+  @property
+  def direction(self):
+    return self._direction
 
-
-
-
-
-      # self.on_collision(other, direction)
-
-
-
+  @direction.setter
+  def direction(self, value):
+    if self._direction != value:
+      self._direction = value
+      self.on_direction_change()
 
 class EntityManagerInstance(IManager[Entity]):
     def __init__(self):

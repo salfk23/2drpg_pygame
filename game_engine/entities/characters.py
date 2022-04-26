@@ -3,7 +3,7 @@ from typing import Sequence
 import pygame
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 
-from game_engine.entities.entity import NORMAL_SIZE_ENTITY, Entity
+from game_engine.entities.entity import NORMAL_SIZE_ENTITY, BiDirectionalEntity, Entity
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
 from game_engine.helpers import Colors, Size2D
@@ -13,18 +13,12 @@ from game_engine.helpers import Colors, Size2D
 class Healthbar(Entity):
   def __init__(self, size: pygame.Vector2):
       super().__init__((0,0), size)
-      self.object = pygame.Surface(size)
-      self.object.fill(Colors.RED)
+      self.sprite = pygame.Surface(size)
+      self.sprite.fill(Colors.RED)
       self._health = 0
       self.max_health = 100
       self.size = size
       self.on_health_change()
-      # Create a rectangle with color green
-      # rect = pygame.Rect(0, 0, size.x, size.y)
-      # rect.center = self.object.get_rect().center
-      # rect.width = self.health * size.x / self.max_health
-
-      # pygame.Surface.fill(self.object, Colors.GREEN, rect)
   @property
   def health(self):
     return self._health
@@ -36,17 +30,22 @@ class Healthbar(Entity):
       self.on_health_change()
 
   def on_health_change(self):
-    pygame.draw.rect(self.object, Colors.YELLOW, (0, 0, self.size.x, self.size.y))
+    pygame.draw.rect(self.sprite, Colors.YELLOW, (0, 0, self.size.x, self.size.y))
     rect = pygame.Rect(0, 0, self.size.x* self.health / self.max_health, self.size.y)
-    pygame.draw.rect(self.object, Colors.GREEN, rect)
+    pygame.draw.rect(self.sprite, Colors.GREEN, rect)
 
 
 
-class Character(ControllableEntity, Hurtable, AffectedByGravity, Solid):
-  def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
+class Character(ControllableEntity, BiDirectionalEntity, Hurtable, AffectedByGravity, Solid):
+  def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
       ControllableEntity.__init__(self, position, size, speed, jump_power)
       Hurtable.__init__(self, 100, 150)
+      image = pygame.transform.scale(image, size)
+      BiDirectionalEntity.__init__(self, image)
+      self.on_direction_change()
 
+  def on_direction_change(self):
+    self.sprite = self.sprites[self.direction]
   @property
   def health(self):
       return self._health
@@ -57,10 +56,14 @@ class Character(ControllableEntity, Hurtable, AffectedByGravity, Solid):
   def update(self):
     AffectedByGravity.update(self)
     ControllableEntity.update(self)
+    if self.velocity.x > 0:
+      self.direction = True
+    elif self.velocity.x < 0:
+      self.direction = False
 
 class Enemy(Character):
-  def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
-      Character.__init__(self, position, size, speed, jump_power)
+  def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
+      Character.__init__(self, image, position, size, speed, jump_power)
       self.health_bar = Healthbar(pygame.Vector2(50, 10))
       self.linked.append(self.health_bar)
       self.on_position_change()
