@@ -84,7 +84,10 @@ class Entity:
     self._remove = value
     if value:
       EventListener.instance().remove(self)
-      EntityManager.instance().remove(self)
+      em = EntityManager.instance()
+      if em.focused_entity == self:
+        em.focused_entity = None
+      em.remove(self)
 
   def update(self):
     pass
