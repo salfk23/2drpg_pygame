@@ -32,9 +32,9 @@ class Entity:
     self._remove = False
     self.name = "Entity"
     # Make a rectangle with color green
-    self.sprite = pygame.Surface(size)
+    sprite = pygame.Surface(size)
     self.object = pygame.transform.rotate(
-      pygame.transform.scale(self.sprite, self.size), 0)
+      pygame.transform.scale(sprite, self.size), 0)
 
   def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
     '''

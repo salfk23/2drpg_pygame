@@ -10,8 +10,9 @@ import game_engine.helpers as helpers
 class MovableBox(ControllableEntity, AffectedByGravity, ColoredEntity, Solid):
 
     def on_color_change(self):
-        self.sprite.fill(self.color)
-        self.object = pygame.transform.scale(self.sprite, self.size)
+        sprite = pygame.Surface(self.size)
+        sprite.fill(self.color)
+        self.object = pygame.transform.scale(sprite, self.size)
 
     def update(self):
         AffectedByGravity.update(self)
