@@ -28,7 +28,7 @@ class ColoredEntity:
 class Entity:
   def __init__(self, position:pygame.Vector2, size: Size2D):
     self._position = position
-    self.size = size
+    self._size = size
     # Remove from the entity manager
     self._remove = False
     self.name = "Entity"
@@ -38,7 +38,14 @@ class Entity:
       pygame.transform.scale(sprite, self.size), 0)
 
     self.linked: list[Entity] = []
-
+  @property
+  def size(self):
+    return self._size
+  @size.setter
+  def size(self, size:Size2D):
+    self._size = size
+    self.object = pygame.transform.rotate(
+      pygame.transform.scale(self.object, self.size), 0)
   def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
     '''
     Calculate the new position of the entity
@@ -150,9 +157,16 @@ class EntityManagerInstance(IManager[Entity]):
         Args:
             screen_size (tuple[int, int]): A tuple of the screen width and height.
         """
-        self.entities: dict[int, Entity] = {}
+        self._entities: dict[int, Entity] = {}
+        self._remove_list: list[Entity] = []
         self.config = Config.instance()
         self.focused_entity:Entity = None
+    @property
+    def entities(self):
+        for entity in self._remove_list:
+            del self._entities[id(entity)]
+        self._remove_list = []
+        return self._entities
 
     @property
     def position(self):
@@ -193,7 +207,8 @@ class EntityManagerInstance(IManager[Entity]):
 
 
     def remove(self, item: Entity):
-        return self.entities.pop(id(item))
+        # return self.entities.pop(id(item))
+        self._remove_list.append(item)
 
 @Singleton[EntityManagerInstance]
 class EntityManager(EntityManagerInstance):
