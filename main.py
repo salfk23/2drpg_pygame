@@ -1,5 +1,6 @@
 import pygame
 from game_engine.engine import EntityManager, GameEngine
+from game_engine.entities.characters import Character
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity, MovableEntity
 from game_engine.entities.entity import ColoredEntity, Entity
 from game_engine.entities.state import Solid
@@ -7,7 +8,10 @@ from game_engine.helpers import Colors, Direction, Size2D
 import game_engine.helpers as helpers
 
 
-class MovableBox(ControllableEntity, AffectedByGravity, ColoredEntity, Solid):
+class MovableBox(Character, ColoredEntity):
+    def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
+        super().__init__(position, size, speed, jump_power)
+
 
     def on_color_change(self):
         sprite = pygame.Surface(self.size)
@@ -15,9 +19,7 @@ class MovableBox(ControllableEntity, AffectedByGravity, ColoredEntity, Solid):
         self.object = pygame.transform.scale(sprite, self.size)
 
     def update(self):
-        AffectedByGravity.update(self)
-        MovableEntity.update(self)
-        old_y = self.position.y
+        super().update()
         new_position, (up, down, left, right) = self.calculate_position(self.position, self.new_position)
 
 
@@ -59,6 +61,7 @@ def main():
     ground.name = "Tile"
 
     wall = Tile(pygame.Vector2(20, 400), (200, 70))
+
     mb = MovableBox(pygame.Vector2(220, 390), (40, 40), 5, 10)
     mb.color = Colors.BLUE
     wall.name = "Tile 2"

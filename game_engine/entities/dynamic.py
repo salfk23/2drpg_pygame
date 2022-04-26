@@ -20,7 +20,7 @@ class AffectedByGravity(MovableEntity):
 
 class ControllableEntity(MovableEntity):
     def __init__(self, position: pygame.Vector2, size:Size2D, speed:int, jump_power:int):
-        super().__init__(position, size)
+        MovableEntity.__init__(self, position, size)
         self.speed = speed
         self.jump_power = jump_power
         self._actions: dict[id, dict[id, Callable]] = {}
