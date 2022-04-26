@@ -33,10 +33,6 @@ class Entity:
     self.name = "Entity"
     # Rectangle for collision detection
     self.coll_square:pygame.Rect = pygame.Rect(self.position, self.size)
-    # Give color to Rect
-
-    self.additional_objects = []
-
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)
     self.object = pygame.transform.rotate(

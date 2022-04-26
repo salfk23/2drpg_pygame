@@ -32,8 +32,6 @@ class RendererInstance(IConfigListener):
         offset = -self.camera + (pygame.Vector2(self.config.screen_dimension)//2)
         for entity in self.entity_manager.get_on_screen():
             self.window.blit(entity.object, entity.position+offset)
-            for extensive in entity.additional_objects:
-                self.window.blit(extensive, extensive.position)
         pygame.display.update()
 
 
