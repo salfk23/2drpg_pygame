@@ -1,15 +1,31 @@
 
 class Hurtable:
   def __init__(self, health: int, max_health: int):
-    self.health = health
+    self._health = health
     self.max_health = max_health
 
-class HurtBox:
-  def __init__(self, x1: int, y1: int, x2: int, y2: int):
-    self.x1 = x1
-    self.y1 = y1
-    self.x2 = x2
-    self.y2 = y2
+  @property
+  def health(self):
+    return self._health
+
+  @health.setter
+  def health(self, health: int):
+    if health != self._health:
+      self.on_health_change()
+    self._health = health
+    if self._health > self.max_health:
+      self._health = self.max_health
+    if self._health < 0:
+      self._health = 0
+    if self._health == 0:
+      self.die()
+
+  def on_health_change(self):
+    pass
+
+  def die(self):
+    raise NotImplementedError()
+
 
 class Solid:
   pass
