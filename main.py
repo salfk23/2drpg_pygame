@@ -88,6 +88,7 @@ def main():
     em.add(ground)
     em.add(wall)
     em.add(mb)
+    em.focused_entity = mb
     fm = FollowingMouse(pygame.Vector2(50, 50), (10, 10))
     fm.name = "FollowingMouse"
     # em.add(fm)

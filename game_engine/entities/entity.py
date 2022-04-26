@@ -89,11 +89,13 @@ class Entity:
   def update(self):
     pass
 
-  def on_screen(self, screen_dimension:Size2D):
+  def on_screen(self, position:pygame.Vector2, screen_dimension:Size2D):
     '''
-    Check if entity is within screen_dimension
+    Check if entity is within screen
     '''
-    return (self._position.x+self.size[0] >= 0 and self._position.x <= screen_dimension[0] and self._position.y+self.size[1] >= 0 and self._position.y <= screen_dimension[1])
+    # return (position.x < self.coll_square.right and position.x < screen_dimension.width and
+    #         position.y > 0 and position.y < screen_dimension.height)
+    return True
   def distance_to(self, other:'Entity'):
     pos = (self.position - other.position).length()
     print(pos)
@@ -135,6 +137,14 @@ class EntityManagerInstance(IManager[Entity]):
         """
         self.entities: dict[int, Entity] = {}
         self.config = Config.instance()
+        self.focused_entity:Entity = None
+
+    @property
+    def position(self):
+        if self.focused_entity is not None:
+            return pygame.Vector2(self.focused_entity.coll_square.center)
+        return pygame.Vector2(self.config.screen_dimension)//2
+
 
     def get_on_screen(self):
         """Return a list of entities that are on screen.
@@ -146,7 +156,7 @@ class EntityManagerInstance(IManager[Entity]):
         return [
             entity
             for entity in self.entities.values()
-            if entity.on_screen(self.config.screen_dimension)
+            if entity.on_screen(self.position, self.config.screen_dimension)
         ]
 
     def get_near(self, entity: Entity, radius: int):
