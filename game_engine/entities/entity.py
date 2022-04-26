@@ -31,8 +31,6 @@ class Entity:
     # Remove from the entity manager
     self._remove = False
     self.name = "Entity"
-    # Rectangle for collision detection
-    self.coll_square:pygame.Rect = pygame.Rect(self.position, self.size)
     # Make a rectangle with color green
     self.sprite = pygame.Surface(size)
     self.object = pygame.transform.rotate(
@@ -48,7 +46,7 @@ class Entity:
       t_up, t_down, t_left, t_right, bias_x, bias_y = self.collision(near)
       if (((t_up or t_down) and t_right and new_position.x > old_position.x) or
           ((t_up or t_down) and t_left and new_position.x < old_position.x)):
-        if (t_up and (near.coll_square.bottom - new_position.y) > 2) or (t_down and (new_position.y - near.coll_square.top) > 2):
+        if (t_up and (near.rect.bottom - new_position.y) > 2) or (t_down and (new_position.y - near.rect.top) > 2):
           new_position.x = old_position.x
           if t_right:
             right = True
@@ -63,17 +61,22 @@ class Entity:
           down = True
         if t_up:
           up = True
-        if self.coll_square.bottom - near.coll_square.top > 2:
-          new_position.y = near.coll_square.top - self.size[1] +1
+        if self.rect.bottom - near.rect.top > 2:
+          new_position.y = near.rect.top - self.size[1] +1
     return new_position, (up, down, left, right)
 
+  def on_position_change(self):
+    pass
+  @property
+  def rect(self):
+    return pygame.Rect(self.position, self.size)
   @property
   def position(self):
     return self._position
   @position.setter
   def position(self, value:pygame.Vector2):
     self._position = value
-    self.coll_square.topleft = value
+    self.on_position_change()
 
 
   # Remove property
@@ -111,12 +114,12 @@ class Entity:
     Check if entity is colliding with other, and if so, where
     did it collide.
     '''
-    is_within_left = self.coll_square.left > other.coll_square.left and self.coll_square.left < other.coll_square.right
-    is_within_right = self.coll_square.right > other.coll_square.left and self.coll_square.right < other.coll_square.right
-    is_within_top = self.coll_square.top > other.coll_square.top and self.coll_square.top < other.coll_square.bottom
-    is_within_bottom = self.coll_square.bottom > other.coll_square.top and self.coll_square.bottom < other.coll_square.bottom
-    bias_x = other.coll_square.centerx - self.coll_square.centerx
-    bias_y = other.coll_square.centery - self.coll_square.centery
+    is_within_left = self.rect.left > other.rect.left and self.rect.left < other.rect.right
+    is_within_right = self.rect.right > other.rect.left and self.rect.right < other.rect.right
+    is_within_top = self.rect.top > other.rect.top and self.rect.top < other.rect.bottom
+    is_within_bottom = self.rect.bottom > other.rect.top and self.rect.bottom < other.rect.bottom
+    bias_x = other.rect.centerx - self.rect.centerx
+    bias_y = other.rect.centery - self.rect.centery
 
     return is_within_top, is_within_bottom, is_within_left, is_within_right, bias_x, bias_y
 
@@ -147,7 +150,7 @@ class EntityManagerInstance(IManager[Entity]):
     @property
     def position(self):
         if self.focused_entity is not None:
-            return pygame.Vector2(self.focused_entity.coll_square.center)
+            return pygame.Vector2(self.focused_entity.rect.center)
         return pygame.Vector2(self.config.screen_dimension)//2
 
 
