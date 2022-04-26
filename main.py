@@ -3,6 +3,7 @@ from game_engine.engine import EntityManager, GameEngine
 from game_engine.entities.characters import Character, Enemy
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity, MovableEntity
 from game_engine.entities.entity import ColoredEntity, Entity
+from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Solid
 from game_engine.helpers import Colors, Direction, Size2D
 import game_engine.helpers as helpers
@@ -17,12 +18,18 @@ class MovableBox(Enemy, ColoredEntity):
                 pygame.K_d: self.move_right,
                 pygame.K_a: self.move_left,
                 pygame.K_w: self.move_jump,
+                pygame.K_s: self.hurt,
             },
             pygame.KEYUP:  {
                 pygame.K_d: self.stop_right,
                 pygame.K_a: self.stop_left,
             }
         }
+
+    
+
+    def hurt(self):
+        self.health -= 10
 
 
     def on_color_change(self):

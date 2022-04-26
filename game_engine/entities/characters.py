@@ -4,6 +4,7 @@ import pygame
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 
 from game_engine.entities.entity import NORMAL_SIZE_ENTITY, Entity
+from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
 from game_engine.helpers import Colors, Size2D
 
@@ -74,4 +75,7 @@ class Enemy(Character):
       super().on_health_change()
       self.health_bar.max_health = self.max_health
       self.health_bar.health = self.health
-
+  def die(self):
+        center = self.rect.center
+        ExplosionParticle.create_particles(pygame.Vector2(center), 100, Colors.RED, (2, 10), (0.1, 3))
+        self.remove = True
