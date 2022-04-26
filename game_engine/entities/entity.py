@@ -1,5 +1,6 @@
 import pygame
 from game_engine.entities.event import EventListener
+from game_engine.entities.state import Solid
 from game_engine.helpers import Colors, Config, IManager, Singleton, Size2D
 
 
@@ -118,6 +119,8 @@ class Entity:
     Check if entity is colliding with other, and if so, where
     did it collide.
     '''
+    if not isinstance(other, Solid):
+      return False, False, False, False, 0, 0
     is_within_left = self.rect.left > other.rect.left and self.rect.left < other.rect.right
     is_within_right = self.rect.right > other.rect.left and self.rect.right < other.rect.right
     is_within_top = self.rect.top > other.rect.top and self.rect.top < other.rect.bottom

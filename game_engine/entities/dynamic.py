@@ -24,17 +24,6 @@ class ControllableEntity(MovableEntity):
         self.speed = speed
         self.jump_power = jump_power
         self._actions: dict[id, dict[id, Callable]] = {}
-        self.actions = {
-            pygame.KEYDOWN : {
-                pygame.K_d: self.move_right,
-                pygame.K_a: self.move_left,
-                pygame.K_w: self.move_jump,
-            },
-            pygame.KEYUP:  {
-                pygame.K_d: self.stop_right,
-                pygame.K_a: self.stop_left,
-            }
-        }
     @property
     def actions(self):
         return self._actions

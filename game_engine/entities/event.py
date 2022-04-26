@@ -17,12 +17,11 @@ class EventListenerInstance:
         if len(callback.__code__.co_varnames) != 1:
             raise ValueError("Callback must have 1 argument")
         if event_type not in self.event_listener:
-            self.event_listener[event_type] = {}
-        elif id(obj) in self.event_listener[event_type]:
-            self.event_listener[event_type][id(obj)] = callback
-        else:
+            if event_type not in self._add_queue:
+                self._add_queue[event_type] = {}
             self._add_queue[event_type][id(obj)] = callback
-        self.event_listener[event_type][id(obj)] = callback
+        else:
+            self.event_listener[event_type][id(obj)] = callback
 
     def remove(self, obj:object):
         for event_type in self.event_listener:
@@ -35,6 +34,8 @@ class EventListenerInstance:
     def get(self, event_type: PyGame_EventType):
         # Append add queue to on_event_listener
         for add_type in self._add_queue:
+            if add_type not in self.event_listener:
+                self.event_listener[add_type] = {}
             self.event_listener[add_type].update(self._add_queue[add_type])
         self._add_queue = {}
         # Remove remove queue from on_event_listener
