@@ -61,7 +61,6 @@ class Entity:
     Calculate the new position of the entity
     '''
     nears = EntityManager.instance().get_near(self, 50)
-    up, down, left, right = False, False, False, False
     collided: dict[int, list[Entity]] = {
       Direction.UP: [],
       Direction.DOWN: [],
@@ -69,31 +68,29 @@ class Entity:
       Direction.RIGHT: []
     }
     for near in nears:
+      if self.name == "Weapon" and near.name == "Enemy":
+        print("Weapon hit enemy")
       t_up, t_down, t_left, t_right, bias_x, bias_y = self.collision(near)
       if (((t_up or t_down) and t_right and new_position.x > old_position.x) or
           ((t_up or t_down) and t_left and new_position.x < old_position.x)):
         if (t_up and (near.rect.bottom - new_position.y) > 2) or (t_down and (new_position.y - near.rect.top) > 2):
           new_position.x = old_position.x
           if t_right:
-            right = True
             collided[Direction.DOWN].append(near)
 
           if t_left:
-            left = True
             collided[Direction.LEFT].append(near)
       if (((t_left or t_right) and t_up and new_position.y < old_position.y) or
           ((t_left or t_right) and t_down and new_position.y > old_position.y)):
         new_position.y = old_position.y
         # if near.coll_square.top < new_position.y:
         if t_down:
-          down = True
           collided[Direction.DOWN].append(near)
         if t_up:
-          up = True
           collided[Direction.UP].append(near)
         if self.rect.bottom - near.rect.top > 2:
           new_position.y = near.rect.top - self.size[1] +1
-    return new_position, (up, down, left, right), collided
+    return new_position, collided
 
   def on_position_change(self):
     pass

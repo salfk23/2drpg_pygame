@@ -9,6 +9,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
   def __init__(self, anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
     super().__init__((0,0), size)
     BiDirectionalEntity.__init__(self, sprite)
+    self.name = "Weapon"
     self.image = sprite
     self.sprite = sprite
     self.speed = speed
@@ -49,6 +50,16 @@ class Weapon(MovableEntity, BiDirectionalEntity):
       if self.frame > 180:
         self.attacking = False
         self.frame = 0
+
+      _, directions = self.calculate_position(pygame.Vector2(0,0), pygame.Vector2(0,0))
+      print(directions, self.attacked_entities)
+      for direction in directions:
+        for entity in directions[direction]:
+          if entity not in self.attacked_entities:
+            print(entity.name)
+            entity.health -= self.damage
+            self.attacked_entities.append(entity)
+
     else:
       self.frame = 0
 
