@@ -1,6 +1,6 @@
 import pygame
 from game_engine.engine import EntityManager, GameEngine
-from game_engine.entities.characters import Character, Enemy
+from game_engine.entities.characters import Character, Enemy, Player
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity, MovableEntity
 from game_engine.entities.entity import ColoredEntity, Entity
 from game_engine.entities.particles import ExplosionParticle
@@ -11,7 +11,7 @@ import game_engine.helpers as helpers
 player_image = helpers.load_image("assets\player.png")
 death_sound = helpers.load_sound("assets\death.ogg")
 
-class MovableBox(Enemy, ColoredEntity):
+class MovableBox(Player, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
 
@@ -43,18 +43,22 @@ class MovableBox(Enemy, ColoredEntity):
 
     def update(self):
         super().update()
-        new_position, (up, down, left, right), dirs = self.calculate_position(self.position, self.new_position)
+        _, dirs = self.calculate_position(self.position, self.position)
+        for entity in dirs[Direction.DOWN]:
+            if isinstance(entity, Enemy):
+                entity.die()
+        new_position, dirs = self.calculate_position(self.position, self.new_position)
 
 
-        if down:
+        if len(dirs[Direction.DOWN]) > 0:
             self.velocity.y = 0
             self.color = Colors.GREEN
-        if up:
+        if len(dirs[Direction.UP]) > 0:
             self.velocity.y = 0
             self.color = Colors.PURPLE
-        if left:
+        if len(dirs[Direction.LEFT]) > 0:
             self.color = Colors.RED
-        if right:
+        if len(dirs[Direction.RIGHT]) > 0:
             self.color = Colors.YELLOW
         self.position = new_position
         if self.position.y > 5000:
@@ -91,18 +95,18 @@ class MovableBox2(Enemy, ColoredEntity):
 
     def update(self):
         super().update()
-        new_position, (up, down, left, right), dirs = self.calculate_position(self.position, self.new_position)
+        new_position, dirs = self.calculate_position(self.position, self.new_position)
 
 
-        if down:
+        if len(dirs[Direction.DOWN]) > 0:
             self.velocity.y = 0
             self.color = Colors.BLACK
-        if up:
+        if len(dirs[Direction.UP]) > 0:
             self.velocity.y = 0
             self.color = Colors.BLACK
-        if left:
+        if len(dirs[Direction.LEFT]) > 0:
             self.color = Colors.BLACK
-        if right:
+        if len(dirs[Direction.RIGHT]) > 0:
             self.color = Colors.BLACK
         self.position = new_position
 
@@ -135,6 +139,8 @@ def main():
 
     mb = MovableBox(pygame.Vector2(220, 390), (40, 40), 5, 10)
     en = MovableBox2(pygame.Vector2(250, 300), (40, 60), 5, 10)
+    mb.name = "MovableBox"
+    en.name = "Enemy"
     mb.color = Colors.BLUE
     wall.name = "Tile 2"
     em.add(ground)
