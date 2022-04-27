@@ -57,7 +57,7 @@ class MovableBox(Player, ColoredEntity):
 
         print(dirs)
         if len(dirs[Direction.DOWN]) > 0:
-            self.velocity.y = 0
+            self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
             self.color = Colors.GREEN
         if len(dirs[Direction.UP]) > 0:
             self.velocity.y = 0
@@ -105,7 +105,7 @@ class MovableBox2(Enemy, ColoredEntity):
 
 
         if len(dirs[Direction.DOWN]) > 0:
-            self.velocity.y = 0
+            self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
             self.color = Colors.BLACK
         if len(dirs[Direction.UP]) > 0:
             self.velocity.y = 0
@@ -143,12 +143,12 @@ def main():
 
     wall = Tile(pygame.Vector2(20, 400), (20, 70))
 
-    mb = MovableBox(pygame.Vector2(220, 390), (40, 40), 5, 10)
-    en = MovableBox2(pygame.Vector2(250, 300), (40, 60), 5, 10)
+    mb = MovableBox(pygame.Vector2(220, 300), (40, 40), 5, 10)
+    en = MovableBox2(pygame.Vector2(300, 300), (40, 60), 5, 10)
     mb.name = "MovableBox"
     en.name = "Enemy"
     mb.color = Colors.BLUE
-    wall.name = "Tile 2"
+    wall.name = "Wall"
     em.add(ground)
     em.add(wall)
     em.add(mb)

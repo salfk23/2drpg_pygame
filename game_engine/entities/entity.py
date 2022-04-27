@@ -81,19 +81,19 @@ class Entity:
         if direction == Direction.UP:
           new_position.y = old_position.y
           for entity in collided[direction]:
-            new_position.y = entity.rect.bottom if entity.rect.bottom > new_position.y else new_position.y
+            new_position.y = entity.rect.bottom if entity.rect.bottom >= new_position.y else new_position.y
         if direction == Direction.DOWN:
-          new_position.y = old_position.y
+          # new_position.y = old_position.y
           for entity in collided[direction]:
-            new_position.y = entity.rect.top if entity.rect.top < new_position.y else new_position.y
+            new_position.y = entity.rect.top-self.rect.height+1 if entity.rect.top <= (new_position.y+self.rect.height) else new_position.y
         if direction == Direction.RIGHT:
           new_position.x = old_position.x
           for entity in collided[direction]:
-            new_position.x = entity.rect.right if entity.rect.right > new_position.x else new_position.x
+            new_position.x = entity.rect.right if entity.rect.right >= new_position.x else new_position.x
         if direction == Direction.LEFT:
           new_position.x = old_position.x
           for entity in collided[direction]:
-            new_position.x = entity.rect.left if entity.rect.left < new_position.x else new_position.x
+            new_position.x = entity.rect.left.x+self.rect.width if entity.rect.left >= (new_position.x+self.rect.width) else new_position.x
     return new_position, collided
 
   def on_position_change(self):
