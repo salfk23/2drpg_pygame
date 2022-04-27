@@ -1,3 +1,4 @@
+import math
 import pygame
 from game_engine.entities.event import EventListener
 from game_engine.entities.state import Solid
@@ -39,6 +40,9 @@ class Entity:
 
     self.linked: list[Entity] = []
 
+  def __str__(self) -> str:
+    return self.name + ": " + str(self.position) + " " + str(self.size)
+
   @property
   def sprite(self):
     return self._sprite
@@ -70,26 +74,16 @@ class Entity:
     for near in nears:
       if self.name == "Weapon" and near.name == "Enemy":
         print("Weapon hit enemy")
-      t_up, t_down, t_left, t_right, bias_x, bias_y = self.collision(near)
-      if (((t_up or t_down) and t_right and new_position.x > old_position.x) or
-          ((t_up or t_down) and t_left and new_position.x < old_position.x)):
-        if (t_up and (near.rect.bottom - new_position.y) > 2) or (t_down and (new_position.y - near.rect.top) > 2):
-          new_position.x = old_position.x
-          if t_right:
-            collided[Direction.DOWN].append(near)
+      has_collided, direction = self.collision(near)
 
-          if t_left:
-            collided[Direction.LEFT].append(near)
-      if (((t_left or t_right) and t_up and new_position.y < old_position.y) or
-          ((t_left or t_right) and t_down and new_position.y > old_position.y)):
-        new_position.y = old_position.y
-        # if near.coll_square.top < new_position.y:
-        if t_down:
-          collided[Direction.DOWN].append(near)
-        if t_up:
-          collided[Direction.UP].append(near)
-        if self.rect.bottom - near.rect.top > 2:
-          new_position.y = near.rect.top - self.size[1] +1
+      if has_collided:
+        collided[direction].append(near)
+        if direction == Direction.UP or direction == Direction.DOWN:
+          new_position.y = old_position.y
+          # if self.rect.bottom - near.rect.top > 2:
+          #   new_position.y = near.rect.top - self.size[1] +1
+        if direction == Direction.LEFT or direction == Direction.RIGHT:
+          new_position.x = old_position.x
     return new_position, collided
 
   def on_position_change(self):
@@ -144,15 +138,30 @@ class Entity:
     did it collide.
     '''
     if not isinstance(other, Solid):
-      return False, False, False, False, 0, 0
-    is_within_left = self.rect.left > other.rect.left and self.rect.left < other.rect.right
-    is_within_right = self.rect.right > other.rect.left and self.rect.right < other.rect.right
-    is_within_top = self.rect.top > other.rect.top and self.rect.top < other.rect.bottom
-    is_within_bottom = self.rect.bottom > other.rect.top and self.rect.bottom < other.rect.bottom
-    bias_x = other.rect.centerx - self.rect.centerx
-    bias_y = other.rect.centery - self.rect.centery
+      return False, None
 
-    return is_within_top, is_within_bottom, is_within_left, is_within_right, bias_x, bias_y
+    collided = False
+
+    collided = self.rect.colliderect(other.rect)
+    direction = Direction.DOWN
+    if collided:
+      x1, y1 = self.rect.center
+      x2, y2 = other.rect.center
+      x_diff = x1 - x2
+      y_diff = y1 - y2
+
+      angle = math.degrees(math.atan2(y_diff, x_diff))
+      if angle < 0:  angle += 360
+
+      if angle >= 45 and angle < 135:
+        direction = Direction.UP
+      elif angle >= 135 and angle < 225:
+        direction = Direction.LEFT
+      elif angle >= 225 and angle < 315:
+        direction = Direction.DOWN
+      elif angle >= 315 or angle < 45:
+        direction = Direction.RIGHT
+    return collided, direction
 
 
 

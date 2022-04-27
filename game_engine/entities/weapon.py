@@ -51,7 +51,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
         self.attacking = False
         self.frame = 0
 
-      _, directions = self.calculate_position(pygame.Vector2(0,0), pygame.Vector2(0,0))
+      _, directions = self.calculate_position(pygame.Vector2(self.rect.center), pygame.Vector2(self.rect.topright))
       print(directions, self.attacked_entities)
       for direction in directions:
         for entity in directions[direction]:
