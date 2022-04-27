@@ -131,7 +131,7 @@ def main():
     ground = Tile(pygame.Vector2(20, 450), (600, 300))
     ground.name = "Tile"
 
-    wall = Tile(pygame.Vector2(20, 400), (200, 70))
+    wall = Tile(pygame.Vector2(20, 400), (20, 70))
 
     mb = MovableBox(pygame.Vector2(220, 390), (40, 40), 5, 10)
     en = MovableBox2(pygame.Vector2(250, 300), (40, 60), 5, 10)

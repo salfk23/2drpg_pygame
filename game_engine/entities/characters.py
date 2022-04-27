@@ -68,8 +68,12 @@ class Enemy(Character):
       self.health_bar = Healthbar(pygame.Vector2(50, 10))
       # stick = Weapon(stick_image, (10, 50), 1, 1)
       # stick.fill(Colors.RED)
-      stick = pygame.transform.rotate(stick_image, -10)
-      self.weapon = Weapon(stick, (10, 50), 10, 10)
+      # stick = pygame.transform.rotate(stick_image, -10)
+      IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
+      IMAGE.fill(Colors.YELLOW)
+      pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (0, 0), (20, 0),(6, 50)))
+      IMAGE = pygame.transform.rotate(IMAGE, 180)
+      self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 10, 1)
       self.linked.append(self.health_bar)
       self.linked.append(self.weapon)
       self.on_position_change()
@@ -80,10 +84,14 @@ class Enemy(Character):
       health_bar_rect.center = self.rect.center
       health_bar_rect.top = self.rect.top - health_bar_rect.height - 10
       weapon_rect = self.weapon.rect
+      weapon_rect.bottom = self.rect.centery
       if self.direction:
-        weapon_rect.bottomright = self.rect.midright
+        weapon_rect.right = self.rect.right
+        self.weapon.anchor = pygame.Vector2(weapon_rect.right, weapon_rect.centery)
       else:
-        weapon_rect.bottomleft = self.rect.midleft
+        weapon_rect.left = self.rect.left - weapon_rect.width
+        self.weapon.anchor = pygame.Vector2(weapon_rect.left, weapon_rect.centery)
+
       self.health_bar.position = health_bar_rect.topleft
       self.weapon.position = weapon_rect.topleft
   def on_health_change(self):
