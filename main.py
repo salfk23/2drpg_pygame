@@ -55,7 +55,6 @@ class MovableBox(Player, ColoredEntity):
         super().update()
         new_position, dirs = self.calculate_position(self.position, self.new_position)
 
-        print(dirs)
         if len(dirs[Direction.DOWN]) > 0:
             self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
             self.color = Colors.GREEN

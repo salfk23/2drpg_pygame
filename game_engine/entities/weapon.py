@@ -18,7 +18,8 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self.frame = 0
     self.anchor = anchor
     self.attacked_entities: list[Hurtable] = []
-
+    self.owner = None
+    self.directions = {}
   @property
   def attacking(self):
     return self._attacking
@@ -30,6 +31,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
       if attacking:
         self.frame = 0
         self.attacked_entities.clear()
+        self.directions.clear()
 
 
   def update(self):
@@ -50,12 +52,15 @@ class Weapon(MovableEntity, BiDirectionalEntity):
       if self.frame > 180:
         self.attacking = False
         self.frame = 0
-
+        print(self.directions, self.attacked_entities)
+        for attacked_entity in self.attacked_entities:
+          print(attacked_entity.health)
+          attacked_entity.on_health_change()
       _, directions = self.calculate_position(pygame.Vector2(self.rect.center), pygame.Vector2(self.rect.topright))
-      print(directions, self.attacked_entities)
+      self.directions.update(directions)
       for direction in directions:
         for entity in directions[direction]:
-          if entity not in self.attacked_entities:
+          if entity not in self.attacked_entities and isinstance(entity, Hurtable) and entity != self.owner:
             print(entity.name)
             entity.health -= self.damage
             self.attacked_entities.append(entity)

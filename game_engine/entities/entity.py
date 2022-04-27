@@ -100,7 +100,7 @@ class Entity:
     pass
   @property
   def rect(self):
-    return pygame.Rect(self.position, self.size)
+    return self.sprite.get_rect(topleft=self.position)
   @property
   def position(self):
     return self._position
@@ -166,9 +166,6 @@ class Entity:
 
       collided_angle_x = other.rect.height / (other.rect.height + other.rect.width) * 90
       collided_angle_y = other.rect.width / (other.rect.height + other.rect.width) * 90
-
-      if self.name == "MovableBox" and other.name == "Tile":
-        print("Player collided with tile")
 
       if angle < 270 + collided_angle_y and angle >= 270 - collided_angle_y:
         direction = Direction.DOWN

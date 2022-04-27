@@ -26,13 +26,12 @@ class Healthbar(Entity):
 
   @health.setter
   def health(self, health: int):
-    if health != self._health:
-      self._health = health
-      self.on_health_change()
+    self._health = health
+    self.on_health_change()
 
   def on_health_change(self):
     pygame.draw.rect(self.sprite, Colors.YELLOW, (0, 0, self.size.x, self.size.y))
-    rect = pygame.Rect(0, 0, self.size.x* self.health / self.max_health, self.size.y)
+    rect = pygame.Rect(0, 0, self.size.x* self._health / self.max_health, self.size.y)
     pygame.draw.rect(self.sprite, Colors.GREEN, rect)
 
 
@@ -40,7 +39,7 @@ class Healthbar(Entity):
 class Character(ControllableEntity, BiDirectionalEntity, Hurtable, AffectedByGravity, Solid):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
       ControllableEntity.__init__(self, position, size, speed, jump_power)
-      Hurtable.__init__(self, 100, 150)
+      Hurtable.__init__(self, 150, 150)
       image = pygame.transform.scale(image, size)
       BiDirectionalEntity.__init__(self, image)
       self.on_direction_change()
@@ -98,6 +97,7 @@ class Enemy(Character):
       super().on_health_change()
       self.health_bar.max_health = self.max_health
       self.health_bar.health = self.health
+      self.health_bar.on_health_change()
   def die(self):
         center = self.rect.center
         ExplosionParticle.create_particles(pygame.Vector2(center), 100, Colors.RED, (2, 10), (0.1, 3))
@@ -114,7 +114,8 @@ class Player(Character):
       IMAGE.fill(Colors.YELLOW)
       pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (0, 0), (20, 0),(6, 50)))
       IMAGE = pygame.transform.rotate(IMAGE, 180)
-      self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 50, 10)
+      self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
+      self.weapon.owner = self
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
