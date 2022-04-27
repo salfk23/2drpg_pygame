@@ -78,12 +78,22 @@ class Entity:
 
       if has_collided:
         collided[direction].append(near)
-        if direction == Direction.UP or direction == Direction.DOWN:
+        if direction == Direction.UP:
           new_position.y = old_position.y
-          # if self.rect.bottom - near.rect.top > 2:
-          #   new_position.y = near.rect.top - self.size[1] +1
-        if direction == Direction.LEFT or direction == Direction.RIGHT:
+          for entity in collided[direction]:
+            new_position.y = entity.rect.bottom if entity.rect.bottom > new_position.y else new_position.y
+        if direction == Direction.DOWN:
+          new_position.y = old_position.y
+          for entity in collided[direction]:
+            new_position.y = entity.rect.top if entity.rect.top < new_position.y else new_position.y
+        if direction == Direction.RIGHT:
           new_position.x = old_position.x
+          for entity in collided[direction]:
+            new_position.x = entity.rect.right if entity.rect.right > new_position.x else new_position.x
+        if direction == Direction.LEFT:
+          new_position.x = old_position.x
+          for entity in collided[direction]:
+            new_position.x = entity.rect.left if entity.rect.left < new_position.x else new_position.x
     return new_position, collided
 
   def on_position_change(self):
@@ -150,16 +160,23 @@ class Entity:
       x_diff = x1 - x2
       y_diff = y1 - y2
 
+
       angle = math.degrees(math.atan2(y_diff, x_diff))
       if angle < 0:  angle += 360
 
-      if angle >= 45 and angle < 135:
-        direction = Direction.UP
-      elif angle >= 135 and angle < 225:
-        direction = Direction.LEFT
-      elif angle >= 225 and angle < 315:
+      collided_angle_x = other.rect.height / (other.rect.height + other.rect.width) * 90
+      collided_angle_y = other.rect.width / (other.rect.height + other.rect.width) * 90
+
+      if self.name == "MovableBox" and other.name == "Tile":
+        print("Player collided with tile")
+
+      if angle < 270 + collided_angle_y and angle >= 270 - collided_angle_y:
         direction = Direction.DOWN
-      elif angle >= 315 or angle < 45:
+      elif angle < 180 + collided_angle_x and angle >= 180 - collided_angle_x:
+        direction = Direction.LEFT
+      elif angle < 90 + collided_angle_y and angle >= 90 - collided_angle_y:
+        direction = Direction.UP
+      elif angle < 0 + collided_angle_x or angle >= 360 - collided_angle_x:
         direction = Direction.RIGHT
     return collided, direction
 
