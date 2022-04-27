@@ -29,6 +29,16 @@ class MovableBox(Player, ColoredEntity):
             }
         }
 
+    def move_jump(self):
+        print("jump")
+
+        _, dirs = self.calculate_position(self.position, self.position+pygame.Vector2(0, 5))
+        for entity in dirs[Direction.DOWN]:
+            print("Jumped on " + entity.name)
+            if isinstance(entity, Enemy):
+                entity.health -= 20
+        super().move_jump()
+
     def attack(self):
         self.weapon.attacking = True
 
@@ -43,10 +53,6 @@ class MovableBox(Player, ColoredEntity):
 
     def update(self):
         super().update()
-        _, dirs = self.calculate_position(self.position, self.position)
-        for entity in dirs[Direction.DOWN]:
-            if isinstance(entity, Enemy):
-                entity.die()
         new_position, dirs = self.calculate_position(self.position, self.new_position)
 
 
