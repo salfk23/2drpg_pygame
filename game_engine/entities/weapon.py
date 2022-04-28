@@ -55,7 +55,6 @@ class Weapon(MovableEntity, BiDirectionalEntity):
         print(self.directions, self.attacked_entities)
         for attacked_entity in self.attacked_entities:
           print(attacked_entity.health)
-          attacked_entity.on_health_change()
       _, directions = self.calculate_position(pygame.Vector2(self.rect.center), pygame.Vector2(self.rect.topright))
       self.directions.update(directions)
       for direction in directions:
