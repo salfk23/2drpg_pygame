@@ -224,7 +224,7 @@ class EntityManagerInstance(IManager[Entity]):
 
     def commit(self):
         for entity in self._remove_list:
-            del self._entities[id(entity)]
+            self._entities.pop(id(entity), None)
         self._remove_list.clear()
         for entity in self._add_list:
             self._entities[id(entity)] = entity

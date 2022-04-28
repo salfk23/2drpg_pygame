@@ -41,7 +41,7 @@ class EventListenerInstance:
         # Remove remove queue from on_event_listener
         for remove_type in self._remove_queue:
             for id_to_remove in self._remove_queue[remove_type]:
-                self.event_listener[remove_type].pop(id_to_remove)
+                self.event_listener[remove_type].pop(id_to_remove, None)
         self._remove_queue = {}
         if event_type in self.event_listener:
             return self.event_listener[event_type]
