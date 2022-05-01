@@ -1,6 +1,7 @@
 
 from typing import Sequence
 import pygame
+from game_engine.entities import weapon
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 
 from game_engine.entities.entity import NORMAL_SIZE_ENTITY, BiDirectionalEntity, Entity
@@ -106,30 +107,30 @@ class Enemy(Character):
 
 class Player(Character):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
+      self.weapon = None
       Character.__init__(self, image, position, size, speed, jump_power)
       # stick = Weapon(stick_image, (10, 50), 1, 1)
       # stick.fill(Colors.RED)
       # stick = pygame.transform.rotate(stick_image, -10)
       IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
-      IMAGE.fill(Colors.YELLOW)
-      pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (0, 0), (20, 0),(6, 50)))
-      IMAGE = pygame.transform.rotate(IMAGE, 180)
+      IMAGE.fill(Colors.CYAN)
+      pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (5, 0), (20, 50),(5, 50)))
       self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
+      self.weapon.offset = pygame.Vector2(10, -25)
       self.weapon.owner = self
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
   def on_position_change(self):
       super().on_position_change()
-      weapon_rect = self.weapon.rect
-      weapon_rect.bottom = self.rect.centery
       if self.direction:
-        weapon_rect.right = self.rect.right
-        self.weapon.anchor = pygame.Vector2(weapon_rect.right, weapon_rect.centery)
+        self.weapon.anchor = pygame.Vector2(self.rect.right, self.rect.centery)
       else:
-        weapon_rect.left = self.rect.left - weapon_rect.width
-        self.weapon.anchor = pygame.Vector2(weapon_rect.left, weapon_rect.centery)
-      self.weapon.position = weapon_rect.topleft
+        self.weapon.anchor = pygame.Vector2(self.rect.left, self.rect.centery)
+  def on_direction_change(self):
+      super().on_direction_change()
+      if self.weapon is not None:
+        self.weapon.direction = self.direction
   def die(self):
         center = self.rect.center
         ExplosionParticle.create_particles(pygame.Vector2(center), 100, Colors.RED, (2, 10), (0.1, 3))

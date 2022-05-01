@@ -20,7 +20,7 @@ class MovableBox(Player, ColoredEntity):
                 pygame.K_d: self.move_right,
                 pygame.K_a: self.move_left,
                 pygame.K_w: self.move_jump,
-                pygame.K_s: self.hurt,
+                pygame.K_s: self.action_hurt,
                 pygame.K_f: self.attack,
             },
             pygame.KEYUP:  {
@@ -42,8 +42,8 @@ class MovableBox(Player, ColoredEntity):
     def attack(self):
         self.weapon.attacking = True
 
-    def hurt(self):
-        self.health -= 100
+    def action_hurt(self):
+        self.hurt(100)
 
 
     def on_color_change(self):
@@ -106,6 +106,10 @@ class MovableBox2(Enemy, ColoredEntity):
         if len(dirs[Direction.DOWN]) > 0:
             self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
             self.color = Colors.BLACK
+            for entity in dirs[Direction.DOWN]:
+                if isinstance(entity, StepableBlock):
+                    entity.color = Colors.RED
+                    self.health -= 1
         if len(dirs[Direction.UP]) > 0:
             self.velocity.y = 0
             self.color = Colors.BLACK
@@ -114,9 +118,6 @@ class MovableBox2(Enemy, ColoredEntity):
         if len(dirs[Direction.RIGHT]) > 0:
             self.color = Colors.BLACK
         self.position = new_position
-
-
-
 
 
 
@@ -133,12 +134,32 @@ class FollowingMouse(Entity, Solid):
 class Tile(Entity, Solid):
     pass
 
+class StepableBlock(Tile, ColoredEntity):
+    def on_color_change(self):
+        sprite = pygame.Surface(self.size)
+        sprite.fill(self.color)
+        self.sprite = pygame.transform.scale(sprite, self.size)
+
+
+def tile_texture(texture, size):
+    result = pygame.Surface(size, depth=32)
+    for x in range(0, size[0], texture.get_width()):
+        for y in range(0, size[1], texture.get_height()):
+            result.blit(texture,(x,y))
+    return result
+
+
+
+
+
 def main():
     print("Running!")
     game = GameEngine.instance()
     em = EntityManager.instance()
     ground = Tile(pygame.Vector2(20, 450), (600, 300))
     ground.name = "Tile"
+
+    ground.sprite = pygame.transform.scale(pygame.image.load("assets\dirt_1.png"), ground.size)
 
     wall = Tile(pygame.Vector2(20, 400), (20, 70))
 

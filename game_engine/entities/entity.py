@@ -61,40 +61,7 @@ class Entity:
     self.sprite = pygame.transform.rotate(
       pygame.transform.scale(self.sprite, self.size), 0)
   def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
-    '''
-    Calculate the new position of the entity
-    '''
-    nears = EntityManager.instance().get_near(self, 50)
-    collided: dict[int, list[Entity]] = {
-      Direction.UP: [],
-      Direction.DOWN: [],
-      Direction.LEFT: [],
-      Direction.RIGHT: []
-    }
-    for near in nears:
-      if self.name == "Weapon" and near.name == "Enemy":
-        print("Weapon hit enemy")
-      has_collided, direction = self.collision(near)
-
-      if has_collided:
-        collided[direction].append(near)
-        if direction == Direction.UP:
-          new_position.y = old_position.y
-          for entity in collided[direction]:
-            new_position.y = entity.rect.bottom if entity.rect.bottom >= new_position.y else new_position.y
-        if direction == Direction.DOWN:
-          # new_position.y = old_position.y
-          for entity in collided[direction]:
-            new_position.y = entity.rect.top-self.rect.height+1 if entity.rect.top <= (new_position.y+self.rect.height) else new_position.y
-        if direction == Direction.RIGHT:
-          new_position.x = old_position.x
-          for entity in collided[direction]:
-            new_position.x = entity.rect.right if entity.rect.right >= new_position.x else new_position.x
-        if direction == Direction.LEFT:
-          new_position.x = old_position.x
-          for entity in collided[direction]:
-            new_position.x = entity.rect.left.x+self.rect.width if entity.rect.left >= (new_position.x+self.rect.width) else new_position.x
-    return new_position, collided
+    pass
 
   def on_position_change(self):
     pass

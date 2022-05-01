@@ -1,8 +1,8 @@
 from typing import Callable
 import pygame
-from game_engine.entities.entity import Entity
+from game_engine.entities.entity import Entity, EntityManager
 from game_engine.entities.event import EmptyCallback, EventListener
-from game_engine.helpers import Size2D
+from game_engine.helpers import Direction, Size2D
 
 
 class MovableEntity(Entity):
@@ -12,6 +12,41 @@ class MovableEntity(Entity):
         self.velocity = pygame.Vector2(0, 0)
     def update(self):
         self.new_position = self.position + self.velocity
+
+    def calculate_position(self, old_position: pygame.Vector2, new_position: pygame.Vector2):
+        '''
+        Calculate the new position of the entity
+        '''
+        nears = EntityManager.instance().get_near(self, 50)
+        collided: dict[int, list[Entity]] = {
+            Direction.UP: [],
+            Direction.DOWN: [],
+            Direction.LEFT: [],
+            Direction.RIGHT: []
+        }
+        for near in nears:
+            has_collided, direction = self.collision(near)
+
+            if has_collided:
+                collided[direction].append(near)
+                if direction == Direction.UP:
+                    new_position.y = old_position.y
+                    for entity in collided[direction]:
+                        if not isinstance(entity, MovableEntity):
+                            new_position.y = entity.rect.bottom if entity.rect.bottom >= new_position.y else new_position.y
+                if direction == Direction.DOWN:
+                    # new_position.y = old_position.y
+                    for entity in collided[direction]:
+                        new_position.y = entity.rect.top-self.rect.height+1 if entity.rect.top <= (new_position.y+self.rect.height) else new_position.y
+                if direction == Direction.RIGHT:
+                    new_position.x = old_position.x
+                    for entity in collided[direction]:
+                        new_position.x = entity.rect.right if entity.rect.right >= new_position.x else new_position.x
+                if direction == Direction.LEFT:
+                    new_position.x = old_position.x
+                    for entity in collided[direction]:
+                        new_position.x = entity.rect.left.x+self.rect.width if entity.rect.left >= (new_position.x+self.rect.width) else new_position.x
+        return new_position, collided
 
 class AffectedByGravity(MovableEntity):
     GRAVITY_MODIFIER = 0.5

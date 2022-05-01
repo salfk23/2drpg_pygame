@@ -20,6 +20,9 @@ class Hurtable:
       if self._health == 0:
         self.die()
 
+  def hurt(self, damage: int):
+    self.health -= damage
+
   def on_health_change(self):
     pass
 

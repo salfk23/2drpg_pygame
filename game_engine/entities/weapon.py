@@ -15,11 +15,27 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self.speed = speed
     self.damage = damage
     self._attacking = False
+    self.offset = pygame.Vector2(-self.rect.height//2,0)
     self.frame = 0
-    self.anchor = anchor
-    self.attacked_entities: list[Hurtable] = []
+    self._anchor = anchor
+    self.attacked_entities: set[Hurtable] = set()
     self.owner = None
-    self.directions = {}
+
+  @property
+  def anchor(self):
+    return self._anchor
+
+  @anchor.setter
+  def anchor(self, anchor:pygame.Vector2):
+    self._anchor = anchor
+    rect = None
+    if self.direction:
+      rect = self.sprite.get_rect(bottomleft=self.anchor)
+    else:
+      rect = self.sprite.get_rect(bottomright=self.anchor)
+    self.position = pygame.Vector2(rect.topleft)
+
+
   @property
   def attacking(self):
     return self._attacking
@@ -31,41 +47,45 @@ class Weapon(MovableEntity, BiDirectionalEntity):
       if attacking:
         self.frame = 0
         self.attacked_entities.clear()
-        self.directions.clear()
+        self.attacked_entities.add(self.owner)
 
+  def on_direction_change(self):
+    self.sprite = self.sprites[self.direction]
 
   def update(self):
     if self.attacking:
       self.frame += self.speed
-      if self.frame <= 90:
+      if self.frame < 270:
+        frame = self.frame if self.frame < 180 else 180 - (self.frame - 180)*2
+
         if self.direction:
-          # Rotate the sprite 90 degrees to the right incrementally
-          self.sprite = pygame.transform.rotozoom(self.image, self.frame, 1)
+          self.sprite = pygame.transform.rotozoom(self.sprites[self.direction], -frame, 1)
+          offset_rect = self.offset.rotate(frame)
+          self.position = pygame.Vector2(
+            self.sprite.get_rect(center=self.anchor+offset_rect).topleft
+          )
         else:
-          # Rotate the sprite 90 degrees to the left incrementally
-          self.sprite = pygame.transform.rotozoom(self.image, -self.frame, 1)
+          self.sprite = pygame.transform.rotozoom(self.sprites[self.direction], frame, 1)
+          offset_rect = pygame.Vector2(-self.offset.x, self.offset.y).rotate(-frame)
+          self.position = pygame.Vector2(
+            self.sprite.get_rect(center=self.anchor+offset_rect).topleft
+          )
       else:
-        if self.direction:
-          self.sprite = pygame.transform.rotozoom(self.image, 90-self.frame%91, 1)
-        else:
-          self.sprite = pygame.transform.rotozoom(self.image, 90+self.frame%91, 1)
-      if self.frame > 180:
+        self.sprite = self.sprites[self.direction]
         self.attacking = False
         self.frame = 0
-        print(self.directions, self.attacked_entities)
-        for attacked_entity in self.attacked_entities:
-          print(attacked_entity.health)
-      _, directions = self.calculate_position(pygame.Vector2(self.rect.center), pygame.Vector2(self.rect.topright))
-      self.directions.update(directions)
-      for direction in directions:
-        for entity in directions[direction]:
-          if entity not in self.attacked_entities and isinstance(entity, Hurtable) and entity != self.owner:
-            print(entity.name)
-            entity.health -= self.damage
-            self.attacked_entities.append(entity)
 
-    else:
-      self.frame = 0
+      _, directions = self.calculate_position(
+        pygame.Vector2(self.rect.center),
+        pygame.Vector2(self.rect.topright if self.direction else self.rect.topleft)
+      )
+
+      entity_hit: list[Hurtable] = [entity for key in directions for entity in directions[key] if isinstance(entity, Hurtable)]
+
+      for entity in entity_hit:
+        if entity not in self.attacked_entities:
+          self.attacked_entities.add(entity)
+          entity.hurt(self.damage)
 
 
 
