@@ -4,7 +4,7 @@ from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 from game_engine.entities.entity import BiDirectionalEntity, Entity, EntityManager
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
-from game_engine.entities.weapon import Weapon
+from game_engine.entities.weapon import Melee
 from game_engine.helpers import Colors, Size2D, load_image
 
 
@@ -71,7 +71,7 @@ class Enemy(Character):
       IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
       IMAGE.fill(Colors.CYAN)
       pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (5, 0), (20, 50),(5, 50)))
-      self.weapon = Weapon(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 10, 10)
+      self.weapon = Melee(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 10, 10)
       self.linked.append(self.health_bar)
       self.linked.append(self.strike_bar)
       self.linked.append(self.weapon)
@@ -114,7 +114,7 @@ class Enemy(Character):
       self.health_bar.on_health_change()
   def die(self):
         center = self.rect.center
-        ExplosionParticle.create_particles(pygame.Vector2(center), 100, Colors.RED, (2, 10), (0.1, 3))
+        ExplosionParticle.create_particles(pygame.Vector2(center), 100)
         self.remove = True
   def update(self):
       super().update()
@@ -152,7 +152,7 @@ class Player(Character):
       IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
       IMAGE.fill(Colors.CYAN)
       pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (5, 0), (20, 50),(5, 50)))
-      self.weapon = Weapon(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
+      self.weapon = Melee(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
@@ -168,5 +168,5 @@ class Player(Character):
         self.weapon.direction = self.direction
   def die(self):
         center = self.rect.center
-        ExplosionParticle.create_particles(pygame.Vector2(center), 100, Colors.RED, (2, 10), (0.1, 3))
+        ExplosionParticle.create_particles(pygame.Vector2(center), 100)
         self.remove = True

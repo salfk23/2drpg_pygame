@@ -73,9 +73,9 @@ class MovableBox(Player, ColoredEntity):
 
     def die(self):
             center = self.rect.center
-            ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.RED, (2, 10), (0.1, 3))
-            ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.YELLOW, (2, 10), (0.1, 3))
-            ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.GREEN, (2, 10), (0.1, 3))
+            ExplosionParticle.create_particles(pygame.Vector2(center), 35, color=Colors.RED)
+            ExplosionParticle.create_particles(pygame.Vector2(center), 35, color=Colors.YELLOW)
+            ExplosionParticle.create_particles(pygame.Vector2(center), 35, color=Colors.GREEN)
             death_sound.play()
             self.health = 0
             self.remove = True
