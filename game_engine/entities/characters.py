@@ -74,7 +74,9 @@ class Enemy(Character):
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
-      self.cooldown = 0
+      self.frame = 0
+      self.strike_interval = 500
+      self.flip_interval = 250
   def on_name_change(self):
       self.health_bar.name = self.name+"_Healthbar"
       self.weapon.name = f"{self.name}_Weapon_{self.weapon.name}"
@@ -105,6 +107,28 @@ class Enemy(Character):
   def update(self):
       super().update()
       # Get distance to player
+
+      players: list[Player] = EntityManager.instance().get_of_type(Player)
+      # Infinite distance
+      distance = float("inf")
+      direction = self.direction
+
+      for player in players:
+        # Get distance to player
+        current_distance =  math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery)
+        if current_distance < distance:
+          distance = current_distance
+          # Get whether the player is on left or right side
+          if player.rect.centerx < self.rect.centerx :
+            direction = False
+          else:
+            direction = True
+      if self.frame % self.flip_interval == 0:
+        self.direction = direction
+      if distance < 200 and self.weapon.attacking == False and self.frame > self.strike_interval:
+        self.weapon.attacking = True
+        self.frame = 0
+      self.frame += 1
 
 
 

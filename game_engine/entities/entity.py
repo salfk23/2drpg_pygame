@@ -234,6 +234,13 @@ class EntityManagerInstance(IManager[Entity]):
         values: list[Entity] = self.entities.values()
         return values
 
+    def get_of_type(self, entity_type: type):
+        return [
+            entity
+            for entity in self.entities.values()
+            if isinstance(entity, entity_type)
+        ]
+
     def add(self, item: Entity):
         self._add_list.append(item)
         for linked in item.linked:
