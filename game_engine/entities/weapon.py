@@ -1,12 +1,12 @@
 import pygame
 from game_engine.entities.dynamic import MovableEntity
-from game_engine.entities.entity import BiDirectionalEntity
+from game_engine.entities.entity import BiDirectionalEntity, Entity
 from game_engine.entities.state import Hurtable
 from game_engine.helpers import Size2D
 
 
 class Weapon(MovableEntity, BiDirectionalEntity):
-  def __init__(self, anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
+  def __init__(self, owner:Entity, anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
     super().__init__((0,0), size)
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Weapon"
@@ -19,7 +19,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self.frame = 0
     self._anchor = anchor
     self.attacked_entities: set[Hurtable] = set()
-    self.owner = None
+    self.owner = owner
     self.type = "melee"
 
   def __str__(self):

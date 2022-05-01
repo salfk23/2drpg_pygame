@@ -1,7 +1,8 @@
+import math
 import pygame
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 
-from game_engine.entities.entity import BiDirectionalEntity, Entity
+from game_engine.entities.entity import BiDirectionalEntity, Entity, EntityManager
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
 from game_engine.entities.weapon import Weapon
@@ -68,14 +69,12 @@ class Enemy(Character):
       IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
       IMAGE.fill(Colors.CYAN)
       pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (5, 0), (20, 50),(5, 50)))
-      self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
-      self.weapon.owner = self
-      self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 10, 1)
-      self.weapon.owner = self
+      self.weapon = Weapon(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 10, 10)
       self.linked.append(self.health_bar)
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
+      self.cooldown = 0
   def on_name_change(self):
       self.health_bar.name = self.name+"_Healthbar"
       self.weapon.name = f"{self.name}_Weapon_{self.weapon.name}"
@@ -108,6 +107,7 @@ class Enemy(Character):
       # Get distance to player
 
 
+
 class Player(Character):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
       self.weapon = None
@@ -115,8 +115,7 @@ class Player(Character):
       IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
       IMAGE.fill(Colors.CYAN)
       pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (5, 0), (20, 50),(5, 50)))
-      self.weapon = Weapon(pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
-      self.weapon.owner = self
+      self.weapon = Weapon(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
