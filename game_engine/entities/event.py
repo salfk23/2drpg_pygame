@@ -21,7 +21,12 @@ class EventListenerInstance:
                 self._add_queue[event_type] = {}
             self._add_queue[event_type][id(obj)] = callback
         else:
-            self.event_listener[event_type][id(obj)] = callback
+            if id(obj) not in self.event_listener[event_type]:
+                if event_type not in self._add_queue:
+                    self._add_queue[event_type] = {}
+                self._add_queue[event_type][id(obj)] = callback
+            else:
+                self.event_listener[event_type][id(obj)] = callback
 
     def remove(self, obj:object):
         for event_type in self.event_listener:
@@ -30,8 +35,7 @@ class EventListenerInstance:
                     self._remove_queue[event_type] = []
                 self._remove_queue[event_type].append(id(obj))
 
-
-    def get(self, event_type: PyGame_EventType):
+    def commit(self):
         # Append add queue to on_event_listener
         for add_type in self._add_queue:
             if add_type not in self.event_listener:
@@ -43,6 +47,8 @@ class EventListenerInstance:
             for id_to_remove in self._remove_queue[remove_type]:
                 self.event_listener[remove_type].pop(id_to_remove, None)
         self._remove_queue = {}
+
+    def get(self, event_type: PyGame_EventType):
         if event_type in self.event_listener:
             return self.event_listener[event_type]
         return {}

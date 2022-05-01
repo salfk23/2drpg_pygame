@@ -28,6 +28,7 @@ class GameEngineInstance:
         clock = pygame.time.Clock()
 
         while self.running:
+            self.event_listener.commit()
             for event in pygame.event.get():
                 for _, callback in self.event_listener.get(event.type).items():
                     callback(event)
