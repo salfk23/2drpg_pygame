@@ -1,11 +1,16 @@
 import pygame
-from game_engine.entities.entity import Entity
+from game_engine.entities.entity import Entity, ColoredEntity
+
+from game_engine.entities.state import Solid
 from game_engine.helpers import Size2D
 
 
-class Tile(Entity):
-  def __init__(self, position: pygame.Vector2, size: Size2D):
-      super().__init__(position, size)
+class Tile(Entity, Solid):
+    pass
 
-  def collision(self, near_entity):
-      return super().collision(near_entity)
+
+class StepableBlock(Tile, ColoredEntity):
+    def on_color_change(self):
+        sprite = pygame.Surface(self.size)
+        sprite.fill(self.color)
+        self.sprite = pygame.transform.scale(sprite, self.size)
