@@ -141,33 +141,6 @@ class ConfigInstance:
 class Config(ConfigInstance):
     pass
 
-def load_image(path: str, colorkey: tuple = None):
-    """Load an image from a path.
-
-    Args:
-        path (str): The path to the image.
-        colorkey (tuple, optional): The colorkey to use. Defaults to None.
-
-    Returns:
-        pygame.Surface: The loaded image.
-    """
-    surface = pygame.image.load(path)
-    if colorkey is not None:
-        surface.set_colorkey(colorkey)
-    return surface
-
-def load_sound(path: str):
-    """Load a sound from a path.
-
-    Args:
-        path (str): The path to the sound.
-
-    Returns:
-        pygame.mixer.Sound: The loaded sound.
-    """
-    pygame.mixer.init()
-    return pygame.mixer.Sound(path)
-
 
 
 def tile_texture(texture, size):

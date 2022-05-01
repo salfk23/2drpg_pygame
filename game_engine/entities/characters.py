@@ -5,9 +5,9 @@ from game_engine.entities.entity import BiDirectionalEntity, Entity, EntityManag
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
 from game_engine.entities.weapon import Melee
-from game_engine.helpers import Colors, Direction, Size2D, load_image
-import game_engine.helpers as helpers
-
+from game_engine.helpers import Colors, Direction, Size2D
+from assets.images import player_image
+from assets.sounds import death_sound
 
 class Statusbar(Entity):
   def __init__(self, size: Size2D):
@@ -61,7 +61,7 @@ class Character(ControllableEntity, BiDirectionalEntity, Hurtable, AffectedByGra
       self.direction = True
     elif self.velocity.x < 0:
       self.direction = False
-stick_image = load_image("assets/stick.png")
+
 class Enemy(Character):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
       self.weapon = None
@@ -175,8 +175,6 @@ class Player(Character):
         )
         self.remove = True
 
-player_image = helpers.load_image("assets\player.png")
-death_sound = helpers.load_sound("assets\death.ogg")
 class PlayerCharacter(Player):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)

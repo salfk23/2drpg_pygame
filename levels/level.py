@@ -6,7 +6,7 @@ from game_engine.entities.entity import EntityManager
 from game_engine.entities.ui import PlayerHealthBar
 from game_engine.entities.world_objects import Tile
 from game_engine.helpers import Colors
-
+from assets.images import dirt_image
 
 def level_1():
     """Level 1"""
@@ -16,8 +16,7 @@ def level_1():
     ground = Tile(pygame.Vector2(20, 450), (600, 300))
     ground.name = "Ground"
 
-    ground.sprite = pygame.transform.scale(
-        pygame.image.load("assets\dirt_1.png"), ground.size)
+    ground.sprite = pygame.transform.scale(dirt_image, ground.size)
 
     wall = Tile(pygame.Vector2(20, 400), (20, 70))
 
