@@ -167,3 +167,12 @@ def load_sound(path: str):
     """
     pygame.mixer.init()
     return pygame.mixer.Sound(path)
+
+
+
+def tile_texture(texture, size):
+    result = pygame.Surface(size, depth=32)
+    for x in range(0, size[0], texture.get_width()):
+        for y in range(0, size[1], texture.get_height()):
+            result.blit(texture, (x, y))
+    return result
