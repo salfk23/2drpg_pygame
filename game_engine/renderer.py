@@ -12,14 +12,23 @@ class RendererInstance(IConfigListener):
         self.config = Config.instance()
         self.window = pygame.display.set_mode(self.config.screen_dimension)
         self.entity_manager = EntityManager.instance()
+        self._camera = pygame.Vector2(0, 0)
         self.config.add_listener(self)
-        self.camera = pygame.Vector2(0, 0)
     def on_screen_change(self):
         self.window = pygame.display.set_mode(self.config.screen_dimension)
     def config_change_events(self):
         return {
             IConfigListener.SCREEN_DIMENSION:self.on_screen_change
         }
+
+    @property
+    def camera(self):
+        return self._camera
+
+    @camera.setter
+    def camera(self, value):
+        self._camera = value
+        self.entity_manager.camera_position = value
 
     def draw(self):
         self.window.fill(Colors.WHITE)
@@ -34,6 +43,12 @@ class RendererInstance(IConfigListener):
         on_screen.reverse()
         for entity in on_screen:
             self.window.blit(entity.sprite, entity.position+offset)
+
+        # Debug hitbox visualization
+        for entity in on_screen:
+            pygame.draw.circle(self.window, Colors.PURPLE, entity.position+offset, 3)
+            pygame.draw.rect(self.window, Colors.PURPLE, entity.sprite.get_rect(topleft=entity.position+offset), 1)  # The rect.
+
         pygame.display.update()
 
 
