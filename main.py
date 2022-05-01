@@ -157,7 +157,7 @@ def main():
     game = GameEngine.instance()
     em = EntityManager.instance()
     ground = Tile(pygame.Vector2(20, 450), (600, 300))
-    ground.name = "Tile"
+    ground.name = "Ground"
 
     ground.sprite = pygame.transform.scale(pygame.image.load("assets\dirt_1.png"), ground.size)
 
@@ -165,8 +165,9 @@ def main():
 
     mb = MovableBox(pygame.Vector2(220, 300), (40, 40), 5, 10)
     en = MovableBox2(pygame.Vector2(300, 300), (40, 60), 5, 10)
-    mb.name = "MovableBox"
+    mb.name = "Player"
     en.name = "Enemy"
+    en.direction = False
     mb.color = Colors.BLUE
     wall.name = "Wall"
     em.add(ground)
