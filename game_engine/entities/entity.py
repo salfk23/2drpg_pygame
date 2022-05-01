@@ -32,7 +32,7 @@ class Entity:
     self._size = size
     # Remove from the entity manager
     self._remove = False
-    self.name = "Entity"
+    self._name = "Entity"
     # Make a rectangle with color green
     sprite = pygame.Surface(size)
     self._sprite = pygame.transform.rotate(
@@ -40,7 +40,19 @@ class Entity:
 
     self.linked: list[Entity] = []
 
-  def __str__(self) -> str:
+  @property
+  def name(self):
+    return self._name
+
+  @name.setter
+  def name(self, name:str):
+    self._name = name
+    self.on_name_change()
+
+  def on_name_change(self):
+    pass
+
+  def __str__(self):
     return self.name + ": " + str(self.position) + " " + str(self.size)
 
   @property
