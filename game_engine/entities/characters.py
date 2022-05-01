@@ -114,7 +114,9 @@ class Enemy(Character):
       self.health_bar.on_health_change()
   def die(self):
         center = self.rect.center
-        ExplosionParticle.create_particles(pygame.Vector2(center), 100)
+        ExplosionParticle.register_particles(
+          ExplosionParticle.create_particles(pygame.Vector2(center), 100)
+        )
         self.remove = True
   def update(self):
       super().update()
@@ -168,5 +170,7 @@ class Player(Character):
         self.weapon.direction = self.direction
   def die(self):
         center = self.rect.center
-        ExplosionParticle.create_particles(pygame.Vector2(center), 100)
+        ExplosionParticle.register_particles(
+          ExplosionParticle.create_particles(pygame.Vector2(center), 100)
+        )
         self.remove = True

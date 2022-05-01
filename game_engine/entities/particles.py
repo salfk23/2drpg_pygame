@@ -59,9 +59,18 @@ class ExplosionParticle(MovableEntity, ColoredEntity):
           self.size = size
   @classmethod
   def create_particles(cls, position: pygame.Vector2, amount: int, size:tuple[int, int]=(2, 10), color: tuple[int, int, int]=Colors.RED, speed:tuple[float, float]=(0.1, 3), angle:tuple[int, int]=(0, 360)):
-      entity_manager = EntityManager.instance()
+      particles: list[ExplosionParticle] = []
       for i in range(amount):
-          entity_manager.add(cls(position, color, size, angle, speed))
+          particles.append(cls(position, color, size, angle, speed))
+      return particles
+  @staticmethod
+  def register_particles(particles: list['ExplosionParticle']):
+      # Shuffle particles
+      random.shuffle(particles)
+      em = EntityManager.instance()
+      for particle in particles:
+          em.add(particle)
+
 
 
 

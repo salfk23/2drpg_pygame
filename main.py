@@ -12,12 +12,13 @@ import game_engine.helpers as helpers
 player_image = helpers.load_image("assets\player.png")
 death_sound = helpers.load_sound("assets\death.ogg")
 
+
 class MovableBox(Player, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
         self.jump_limit = 3
         self.actions = {
-            pygame.KEYDOWN : {
+            pygame.KEYDOWN: {
                 pygame.K_d: self.move_right,
                 pygame.K_a: self.move_left,
                 pygame.K_w: self.move_jump,
@@ -33,7 +34,8 @@ class MovableBox(Player, ColoredEntity):
     def move_jump(self):
         print("jump")
 
-        _, dirs = self.calculate_position(self.position, self.position+pygame.Vector2(0, 5))
+        _, dirs = self.calculate_position(
+            self.position, self.position+pygame.Vector2(0, 5))
         for entity in dirs[Direction.DOWN]:
             self.jump_number = 0
             print("Jumped on " + entity.name)
@@ -47,7 +49,6 @@ class MovableBox(Player, ColoredEntity):
     def action_hurt(self):
         self.hurt(100)
 
-
     def on_color_change(self):
         sprite = pygame.Surface(self.size)
         sprite.fill(self.color)
@@ -55,7 +56,8 @@ class MovableBox(Player, ColoredEntity):
 
     def update(self):
         super().update()
-        new_position, dirs = self.calculate_position(self.position, self.new_position)
+        new_position, dirs = self.calculate_position(
+            self.position, self.new_position)
 
         if len(dirs[Direction.DOWN]) > 0:
             self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
@@ -72,20 +74,28 @@ class MovableBox(Player, ColoredEntity):
             self.die()
 
     def die(self):
-            center = self.rect.center
-            ExplosionParticle.create_particles(pygame.Vector2(center), 35, color=Colors.RED)
-            ExplosionParticle.create_particles(pygame.Vector2(center), 35, color=Colors.YELLOW)
-            ExplosionParticle.create_particles(pygame.Vector2(center), 35, color=Colors.GREEN)
-            death_sound.play()
-            self.health = 0
-            self.remove = True
+        center = self.rect.center
+        particles = []
+        particles.extend(ExplosionParticle.create_particles(
+            pygame.Vector2(center), 35, color=Colors.RED, size=(5, 15)))
+        particles.extend(ExplosionParticle.create_particles(
+            pygame.Vector2(center), 35, color=Colors.YELLOW, size=(5, 15)))
+        particles.extend(ExplosionParticle.create_particles(
+            pygame.Vector2(center), 35, color=Colors.GREEN, size=(5, 15)))
+        particles.extend(ExplosionParticle.create_particles(
+            pygame.Vector2(center), 35, color=Colors.BLACK, size=(5, 15)))
+        ExplosionParticle.register_particles(particles)
+        death_sound.play()
+        self.health = 0
+        self.remove = True
+
 
 class MovableBox2(Enemy, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
 
         self.actions = {
-            pygame.KEYDOWN : {
+            pygame.KEYDOWN: {
                 pygame.K_j: self.move_right,
                 pygame.K_l: self.move_left,
                 pygame.K_i: self.move_jump,
@@ -103,8 +113,8 @@ class MovableBox2(Enemy, ColoredEntity):
 
     def update(self):
         super().update()
-        new_position, dirs = self.calculate_position(self.position, self.new_position)
-
+        new_position, dirs = self.calculate_position(
+            self.position, self.new_position)
 
         if len(dirs[Direction.DOWN]) > 0:
             self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
@@ -123,10 +133,6 @@ class MovableBox2(Enemy, ColoredEntity):
         self.position = new_position
 
 
-
-
-
-
 class FollowingMouse(Entity, Solid):
     def update(self):
         # Get mouse position
@@ -134,8 +140,10 @@ class FollowingMouse(Entity, Solid):
 
         self.position = point
 
+
 class Tile(Entity, Solid):
     pass
+
 
 class StepableBlock(Tile, ColoredEntity):
     def on_color_change(self):
@@ -148,11 +156,8 @@ def tile_texture(texture, size):
     result = pygame.Surface(size, depth=32)
     for x in range(0, size[0], texture.get_width()):
         for y in range(0, size[1], texture.get_height()):
-            result.blit(texture,(x,y))
+            result.blit(texture, (x, y))
     return result
-
-
-
 
 
 def main():
@@ -162,7 +167,8 @@ def main():
     ground = Tile(pygame.Vector2(20, 450), (600, 300))
     ground.name = "Ground"
 
-    ground.sprite = pygame.transform.scale(pygame.image.load("assets\dirt_1.png"), ground.size)
+    ground.sprite = pygame.transform.scale(
+        pygame.image.load("assets\dirt_1.png"), ground.size)
 
     wall = Tile(pygame.Vector2(20, 400), (20, 70))
 
@@ -172,7 +178,7 @@ def main():
     en.name = "Enemy"
     en.direction = False
     mb.color = Colors.BLUE
-    phb = PlayerHealthBar((25,15),(300,15))
+    phb = PlayerHealthBar((25, 15), (300, 15))
     phb.watch_hurtable(mb)
     wall.name = "Wall"
     em.add(ground)
@@ -185,7 +191,6 @@ def main():
     fm.name = "FollowingMouse"
     # em.add(fm)
     game.run()
-
 
 
 if __name__ == '__main__':
