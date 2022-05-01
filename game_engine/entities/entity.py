@@ -109,17 +109,15 @@ class Entity:
   def update(self):
     pass
 
-  def on_screen(self, position:pygame.Vector2, screen_dimension:Size2D):
+  def on_screen(self,position:pygame.Vector2, size:Size2D):
     '''
     Check if entity is within screen
     '''
-    # return (position.x < self.coll_square.right and position.x < screen_dimension.width and
-    #         position.y > 0 and position.y < screen_dimension.height)
-    return True
+    rect = pygame.Rect(position, size)
+    rect.center = position
+    return self.rect.colliderect(rect)
   def distance_to(self, other:'Entity'):
-    pos = (self.position - other.position).length()
-    print(pos)
-    return pos
+    return (self.position - other.position).length()
 
   def collision(self, other:'Entity'):
     '''
@@ -190,6 +188,7 @@ class EntityManagerInstance(IManager[Entity]):
         self._add_list: list[Entity] = []
         self.config = Config.instance()
         self.focused_entity:Entity = None
+        self.camera_position = pygame.Vector2(0, 0)
     @property
     def entities(self):
         return self._entities
@@ -219,7 +218,7 @@ class EntityManagerInstance(IManager[Entity]):
         return [
             entity
             for entity in self.entities.values()
-            if entity.on_screen(self.position, self.config.screen_dimension)
+            if entity.on_screen(self.camera_position, self.config.screen_dimension)
         ]
 
     def get_near(self, entity: Entity, radius: int):
