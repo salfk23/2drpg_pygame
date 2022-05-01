@@ -58,6 +58,8 @@ class ControllableEntity(MovableEntity):
         MovableEntity.__init__(self, position, size)
         self.speed = speed
         self.jump_power = jump_power
+        self.jump_number = 0
+        self.jump_limit = 2
         self._actions: dict[id, dict[id, Callable]] = {}
     @property
     def actions(self):
@@ -80,5 +82,7 @@ class ControllableEntity(MovableEntity):
     def stop_left(self):
         self.velocity.x = 0 if self.velocity.x < 0 else self.velocity.x
     def move_jump(self):
-        self.velocity.y = -self.jump_power
+        self.jump_number += 1
+        if self.jump_number < self.jump_limit:
+            self.velocity.y = -self.jump_power
 

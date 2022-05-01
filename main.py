@@ -15,7 +15,7 @@ death_sound = helpers.load_sound("assets\death.ogg")
 class MovableBox(Player, ColoredEntity):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
-
+        self.jump_limit = 3
         self.actions = {
             pygame.KEYDOWN : {
                 pygame.K_d: self.move_right,
@@ -35,9 +35,10 @@ class MovableBox(Player, ColoredEntity):
 
         _, dirs = self.calculate_position(self.position, self.position+pygame.Vector2(0, 5))
         for entity in dirs[Direction.DOWN]:
+            self.jump_number = 0
             print("Jumped on " + entity.name)
             if isinstance(entity, Enemy):
-                entity.health -= 20
+                entity.hurt(20)
         super().move_jump()
 
     def attack(self):
