@@ -20,7 +20,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self._anchor = anchor
     self.attacked_entities: set[Hurtable] = set()
     self.owner = owner
-    self.type = "melee"
+    self.type = "None"
 
   def __str__(self):
     return "{} {} [{}] > {}".format(super().__str__(), self.type, self.damage, self.owner)
@@ -55,6 +55,20 @@ class Weapon(MovableEntity, BiDirectionalEntity):
 
   def on_direction_change(self):
     self.sprite = self.sprites[self.direction]
+
+  def update(self):
+    pass
+
+
+
+
+
+class Melee(Weapon):
+  def __init__(self, owner:Entity, anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
+    super().__init__(owner, anchor, sprite, size, damage, speed)
+    BiDirectionalEntity.__init__(self, sprite)
+    self.name = "Melee"
+    self.type = "melee"
 
   def update(self):
     if self.attacking:
