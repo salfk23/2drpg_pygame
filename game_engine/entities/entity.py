@@ -177,6 +177,18 @@ class BiDirectionalEntity:
       self._direction = value
       self.on_direction_change()
 
+
+class UIEntity(Entity, ColoredEntity):
+  def __init__(self, position:pygame.Vector2, size:Size2D):
+    super().__init__(position, size)
+    self.color = Colors.BLUE
+    self.name = "UI"
+    self.show = True
+    self.sprite.fill(self.color)
+  def on_color_change(self):
+      pass
+  def update(self):
+    pass
 class EntityManagerInstance(IManager[Entity]):
     def __init__(self):
         """Create a new EntityManager instance.
@@ -184,6 +196,7 @@ class EntityManagerInstance(IManager[Entity]):
             screen_size (tuple[int, int]): A tuple of the screen width and height.
         """
         self._entities: dict[int, Entity] = {}
+        self._ui_components: dict[int, UIEntity] = {}
         self._remove_list: list[Entity] = []
         self._add_list: list[Entity] = []
         self.config = Config.instance()
@@ -192,6 +205,10 @@ class EntityManagerInstance(IManager[Entity]):
     @property
     def entities(self):
         return self._entities
+
+    @property
+    def ui_components(self):
+        return self._ui_components
 
     @property
     def position(self):
@@ -203,9 +220,13 @@ class EntityManagerInstance(IManager[Entity]):
     def commit(self):
         for entity in self._remove_list:
             self._entities.pop(id(entity), None)
+            self._ui_components.pop(id(entity), None)
         self._remove_list.clear()
         for entity in self._add_list:
-            self._entities[id(entity)] = entity
+            if isinstance(entity, UIEntity):
+                self._ui_components[id(entity)] = entity
+            else:
+              self._entities[id(entity)] = entity
         self._add_list.clear()
 
     def get_on_screen(self):
@@ -221,6 +242,13 @@ class EntityManagerInstance(IManager[Entity]):
             if entity.on_screen(self.camera_position, self.config.screen_dimension)
         ]
 
+    def get_ui(self):
+        return [
+            entity
+            for entity in self.ui_components.values()
+            if entity.show
+        ]
+
     def get_near(self, entity: Entity, radius: int):
         return [
             item
@@ -230,8 +258,12 @@ class EntityManagerInstance(IManager[Entity]):
         ]
 
     def get_all(self):
-        values: list[Entity] = self.entities.values()
-        return values
+        lists = []
+        entities: list[Entity] = self.entities.values()
+        uis : list[UIEntity] = self.ui_components.values()
+        lists.extend(entities)
+        lists.extend(uis)
+        return lists
 
     def get_of_type(self, entity_type: type):
         return [

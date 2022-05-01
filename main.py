@@ -5,6 +5,7 @@ from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity, 
 from game_engine.entities.entity import ColoredEntity, Entity
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Solid
+from game_engine.entities.ui import PlayerHealthBar
 from game_engine.helpers import Colors, Direction, Size2D
 import game_engine.helpers as helpers
 
@@ -75,6 +76,7 @@ class MovableBox(Player, ColoredEntity):
             ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.YELLOW, (2, 10), (0.1, 3))
             ExplosionParticle.create_particles(pygame.Vector2(center), 35, Colors.GREEN, (2, 10), (0.1, 3))
             death_sound.play()
+            self.health = 0
             self.remove = True
 
 class MovableBox2(Enemy, ColoredEntity):
@@ -169,11 +171,14 @@ def main():
     en.name = "Enemy"
     en.direction = False
     mb.color = Colors.BLUE
+    phb = PlayerHealthBar((25,15),(300,15))
+    phb.watch_hurtable(mb)
     wall.name = "Wall"
     em.add(ground)
     em.add(wall)
     em.add(mb)
     em.add(en)
+    em.add(phb)
     em.focused_entity = mb
     fm = FollowingMouse(pygame.Vector2(50, 50), (10, 10))
     fm.name = "FollowingMouse"

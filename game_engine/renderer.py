@@ -49,6 +49,8 @@ class RendererInstance(IConfigListener):
             pygame.draw.circle(self.window, Colors.PURPLE, entity.position+offset, 3)
             pygame.draw.rect(self.window, Colors.PURPLE, entity.sprite.get_rect(topleft=entity.position+offset), 1)  # The rect.
 
+        for ui in self.entity_manager.get_ui():
+            self.window.blit(ui.sprite, ui.position)
         pygame.display.update()
 
 
