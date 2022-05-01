@@ -282,6 +282,10 @@ class EntityManagerInstance(IManager[Entity]):
         # return self.entities.pop(id(item))
         self._remove_list.append(item)
 
+    def clear(self):
+        for entity in self.entities.values():
+            entity.remove = True
+
 @Singleton[EntityManagerInstance]
 class EntityManager(EntityManagerInstance):
     pass
