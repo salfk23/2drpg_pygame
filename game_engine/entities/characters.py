@@ -1,4 +1,3 @@
-import math
 import pygame
 from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
 
@@ -128,7 +127,7 @@ class Enemy(Character):
 
       for player in players:
         # Get distance to player
-        current_distance =  math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery)
+        current_distance =  self.distance_to(player)
         if current_distance < distance:
           distance = current_distance
           # Get whether the player is on left or right side
