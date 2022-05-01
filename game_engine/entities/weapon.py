@@ -15,11 +15,15 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self.speed = speed
     self.damage = damage
     self._attacking = False
-    self.offset = pygame.Vector2(-self.rect.height//2,0)
+    self.offset = pygame.Vector2(self.rect.width/2, -self.rect.height/2)
     self.frame = 0
     self._anchor = anchor
     self.attacked_entities: set[Hurtable] = set()
     self.owner = None
+    self.type = "melee"
+
+  def __str__(self):
+    return "{} {} [{}] > {}".format(super().__str__(), self.type, self.damage, self.owner)
 
   @property
   def anchor(self):
