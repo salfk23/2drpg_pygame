@@ -1,3 +1,4 @@
+# Todo: Create inventory system
 from game_engine.helpers import Singleton
 
 
