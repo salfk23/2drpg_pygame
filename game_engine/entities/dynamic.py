@@ -99,9 +99,9 @@ class MouseControllable(Controllable, Hitbox):
             self.on_mouse_down()
 
     def on_mouse_down(self):
-        print("Mouse down")
+        pass
     def on_mouse_up(self):
-        print("Mouse up")
+        pass
     def on_pressed(self):
         pass
 
