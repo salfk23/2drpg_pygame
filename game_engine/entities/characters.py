@@ -4,7 +4,7 @@ from game_engine.entities.dynamic import AffectedByGravity, JumpableEntity
 from game_engine.entities.entity import BiDirectionalEntity, Entity, EntityManager
 from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
-from game_engine.entities.weapon import Melee
+from game_engine.entities.weapon import Melee, Weapon
 from game_engine.helpers import Colors, Direction, Size2D
 from assets.images import player_image
 from assets.sounds import death_sound
@@ -149,15 +149,31 @@ class Enemy(Character):
 
 class Player(Character):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
-      self.weapon = None
+      self._weapon = None
       Character.__init__(self, image, position, size, speed, jump_power)
       IMAGE = pygame.Surface((20, 50), pygame.SRCALPHA)
       IMAGE.fill(Colors.CYAN)
       pygame.draw.polygon(IMAGE, pygame.Color('red'), ( (5, 0), (20, 50),(5, 50)))
-      self.weapon = Melee(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
+      self._weapon = Melee(self, pygame.Vector2(self.rect.right,self.rect.centery),IMAGE, (10, 50), 30, 10)
       self.linked.append(self.weapon)
       self.on_position_change()
       self.on_health_change()
+
+  @property
+  def weapon(self):
+      return self._weapon
+
+  @weapon.setter
+  def weapon(self, weapon: Weapon):
+      if self._weapon is not None:
+        self.linked.remove(self._weapon)
+        self._weapon.remove = True
+      self._weapon = weapon
+      self.linked.append(weapon)
+      self.on_position_change()
+      self.on_health_change()
+      self.on_name_change()
+
   def on_position_change(self):
       super().on_position_change()
       if self.direction:
