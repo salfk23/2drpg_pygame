@@ -9,11 +9,11 @@ abc (Abstract Base Class) (Built-in)
 typing (Type Hinting) (Built-in)
 
 ## How to play:
-Press A, D to move left and right.
-Press W to jump.
-Press S to suicide.
-Press F to attack.
-Press Space to attack. (In development)
+Press `A` to move left.
+Press `D` to move right.
+Press `W` to jump.
+Press `SPACE` or `MOUSE LEFT CLICK` to attack.
+Press `S` to harm self (by 100 points if you get stuck).
 
 
 ## Installation:

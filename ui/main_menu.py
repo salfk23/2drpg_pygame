@@ -121,9 +121,9 @@ class HelpMenuInstance(UIEntity, IConfigListener):
         instruction_text = (
             'Press A to move left\n'
             'Press D to move right\n'
-            'Press W to jump.\n'
-            'Press S to harm left. (If stuck)\n'
-            'Press F to attack.\n'
+            'Press W to jump\n'
+            'Press S to harm self (If stuck)\n'
+            'Press SPACE or MOUSE LEFT CLICK to attack\n'
         )
         font = pygame.font.SysFont("monospace", 18)
         y_mod = 0

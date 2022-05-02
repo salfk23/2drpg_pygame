@@ -186,11 +186,14 @@ class PlayerCharacter(Player):
                 pygame.K_a: self.move_left,
                 pygame.K_w: self.move_jump,
                 pygame.K_s: self.action_hurt,
-                pygame.K_f: self.attack,
+                pygame.K_SPACE: self.attack,
             },
             pygame.KEYUP:  {
                 pygame.K_d: self.stop_right,
                 pygame.K_a: self.stop_left,
+            },
+            pygame.MOUSEBUTTONDOWN:{
+                pygame.BUTTON_LEFT: self.attack,
             }
         }
 
