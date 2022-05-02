@@ -1,20 +1,22 @@
 
 
 from game_engine.entities.entity import EntityManager
-from levels.level_1 import level_1
+from levels.level_1 import run as level_1
+from levels.level_2 import run as level_2
+from levels.level_3 import run as level_3
+from levels.level_4 import run as level_4
+from levels.level_5 import run as level_5
+from levels.level_6 import run as level_6
+
 
 
 _levels = {
   "1": level_1,
-  "2": level_1,
-  "3": level_1,
-  "4": level_1,
-  "5": level_1,
-  "6": level_1,
-  "7": level_1,
-  "8": level_1,
-  "9": level_1,
-  "10": level_1,
+  "2": level_2,
+  "3": level_3,
+  "4": level_4,
+  "5": level_5,
+  "6": level_6,
 }
 
 def get_levels():

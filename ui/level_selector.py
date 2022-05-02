@@ -1,4 +1,5 @@
 
+from copy import deepcopy
 import pygame
 from game_engine.engine import GameEngine
 from game_engine.entities.entity import UIEntity
@@ -46,9 +47,9 @@ class LevelSelectorInstance(UIEntity, IConfigListener):
         y = 0
 
         for level_id in get_levels():
-            def on_level_click():
-              self.selected_level = level_id
-              self.load_last_level()
+            def on_level_click(level_id:str = level_id):
+                self.selected_level = level_id
+                self.load_last_level()
             button_sprite, button_size = UIButton.center_button_sprite(
                 level_id, pygame.font.get_default_font(), 40, button_font_color, button_bgcolor,
                 padding=10, button_size=(80, 80)

@@ -6,11 +6,11 @@ from game_engine.entities.entity import EntityManager
 from game_engine.entities.world_objects import Tile
 
 from ui.player import PlayerHUD
-from assets.images.library import dirt_image_proto
+from assets.images.library import dirt_image
 from assets.objects.weapons import sample_weapon
 
 def run():
-    print("Level 1")
+    print("Level 3")
     em = EntityManager.instance()
 
     # World Objects declaration
@@ -23,7 +23,7 @@ def run():
 
     # Tweaks
     ground.name = "Ground"
-    ground.sprite = pygame.transform.scale(dirt_image_proto, ground.size)
+    ground.sprite = pygame.transform.scale(dirt_image, ground.size)
 
     wall.name = "Wall"
 
@@ -45,7 +45,7 @@ def run():
     em.add(wall)
     # Then other entities
     em.add(player)
-    em.add(en)
+    # em.add(en)
 
     # Focus on player
     em.focused_entity = player
