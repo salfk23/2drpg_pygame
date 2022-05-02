@@ -7,8 +7,8 @@ from game_engine.entities.entity import BackgroundEntity, Entity, EntityManager
 from game_engine.entities.world_objects import Tile
 
 from ui.player import PlayerHUD
-from assets.images import dirt_image, grass_images, tree_images
-from assets.objects.weapons import sample_weapon
+from assets.images import dirt_image, grass_images, tree_images, foliage_images
+from assets.objects.weapons import *
 from game_engine.helpers import gradient_rect, tile_texture
 
 
@@ -32,12 +32,15 @@ def run():
     invisible_ground = Tile(
         pygame.Vector2(-1000, GROUND_LEVEL), (WORLD_LENGTH, 50))
     ground = Tile(pygame.Vector2(-1000, 525), (WORLD_LENGTH, 300))
-    invisible_wall = Tile(pygame.Vector2(0, 0), (20, 500))
+    invisible_walls = [
+        Tile(pygame.Vector2(0, 0), (20, 500)),
+        Tile(pygame.Vector2(WORLD_LENGTH-2000, 0), (20, 500))
+    ]
 
     background: list[Entity] = []
 
     tree_size = pygame.Vector2(60, 90)
-    for x in range(-500, 8500, 100):
+    for x in range(-500, WORLD_LENGTH-1200, 100):
         # Increase tree tree_size by multiplying by random number
         size = tree_size * random.uniform(0.8, 3)
         # Randomize tree position
@@ -48,6 +51,22 @@ def run():
         )
         tree.sprite = pygame.transform.scale(random.choice(tree_images), size)
         background.append(tree)
+
+        int_decoration = random.randint(0, 3)
+
+        for i in range(int_decoration):
+            foilage_image = random.choice(foliage_images)
+            # Decrease foilage size by multiplying by random number
+            size = pygame.Vector2(15, 15) * random.uniform(1, 2)
+            decoration = Entity(
+                pygame.Vector2(x + random.randint(-100, 100),
+                GROUND_LEVEL-size.y+5),
+                pygame.Vector2(0, 0)
+            )
+            decoration.sprite = pygame.transform.scale(foilage_image, size)
+            background.append(decoration)
+
+
 
     # Player and other entities declaration
     player = Player(pygame.Vector2(220, 300), 5, 10)
@@ -60,9 +79,7 @@ def run():
     ground.sprite = tile_texture(dirt_image, ground.size)
     grass.sprite = tile_texture(grass_images, grass.size)
 
-    invisible_wall.name = "Invisible Wall"
-
-    player.weapon = sample_weapon.copy()
+    player.weapon = silversword.copy()
 
     en.name = "Enemy"
     en.direction = False
@@ -76,7 +93,7 @@ def run():
     em.add(ground)
     em.add(invisible_ground)
     em.add(grass)
-    em.add(invisible_wall)
+    em.add(invisible_walls)
     # Then other entities
     em.add(player)
     em.add(en)
