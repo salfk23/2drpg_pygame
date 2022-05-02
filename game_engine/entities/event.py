@@ -5,7 +5,7 @@ from game_engine.helpers import Singleton
 PyGame_EventType = int
 PyGame_EventKey = int
 # Make a lambda with 2 parameters
-EmptyCallback = lambda: None
+EmptyCallback = lambda e: None
 class EventListenerInstance:
     def __init__(self):
         self.event_listener: dict[PyGame_EventType, dict[int, Callable]] = {}

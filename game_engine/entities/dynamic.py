@@ -53,14 +53,10 @@ class AffectedByGravity(MovableEntity):
     def update(self):
         self.velocity.y += self.GRAVITY_MODIFIER
 
-class ControllableEntity(MovableEntity):
-    def __init__(self, position: pygame.Vector2, size:Size2D, speed:int, jump_power:int):
-        MovableEntity.__init__(self, position, size)
-        self.speed = speed
-        self.jump_power = jump_power
-        self.jump_number = 0
-        self.jump_limit = 2
+class Controllable:
+    def __init__(self):
         self._actions: dict[id, dict[id, Callable]] = {}
+
     @property
     def actions(self):
         return self._actions
@@ -70,18 +66,65 @@ class ControllableEntity(MovableEntity):
         eventListener = EventListener.instance()
         eventListener.remove(self)
         for event_type in self.actions:
-            eventListener.update(event_type, self, lambda e: self.actions.get(e.type, {}).get(e.key, EmptyCallback)())
+            if event_type == pygame.KEYDOWN or event_type == pygame.KEYUP:
+                eventListener.update(event_type, self, lambda e: self.actions.get(e.type, {}).get(e.key, EmptyCallback)(e))
+            elif event_type == pygame.MOUSEBUTTONUP or event_type == pygame.MOUSEBUTTONDOWN:
+                eventListener.update(event_type, self, lambda e: self.actions.get(e.type, {}).get(e.button, EmptyCallback)(e))
+            else:
+                print("Unknown event type:", event_type, "for", self)
+
+class MouseControllable(Controllable):
+    def __init__(self):
+        super().__init__()
+        self.button_down = False
+        self.actions = {
+            pygame.MOUSEBUTTONUP: {
+                pygame.BUTTON_LEFT: self.on_up_event
+            },
+            pygame.MOUSEBUTTONDOWN: {
+                pygame.BUTTON_LEFT: self.on_down_event
+            }
+        }
+    def on_up_event(self, event: pygame.event.Event):
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos) and self.show:
+            self.on_mouse_up()
+            if self.button_down:
+                self.on_pressed()
+        self.button_down = False
+    def on_down_event(self, event: pygame.event.Event):
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos) and self.show:
+            self.button_down = True
+            self.on_mouse_down()
+
+    def on_mouse_down(self):
+        print("Mouse down")
+    def on_mouse_up(self):
+        print("Mouse up")
+    def on_pressed(self):
+        pass
 
 
-    def move_left(self):
+class JumpableEntity(MovableEntity, Controllable):
+    def __init__(self, position: pygame.Vector2, size:Size2D, speed:int, jump_power:int):
+        MovableEntity.__init__(self, position, size)
+        Controllable.__init__(self)
+        self.speed = speed
+        self.jump_power = jump_power
+        self.jump_number = 0
+        self.jump_limit = 2
+        self._actions: dict[id, dict[id, Callable]] = {}
+
+    def move_left(self, event: pygame.event.Event):
         self.velocity.x = -self.speed
-    def move_right(self):
+    def move_right(self, event: pygame.event.Event):
         self.velocity.x = self.speed
-    def stop_right(self):
+    def stop_right(self, event: pygame.event.Event):
         self.velocity.x = 0 if self.velocity.x > 0 else self.velocity.x
-    def stop_left(self):
+    def stop_left(self, event: pygame.event.Event):
         self.velocity.x = 0 if self.velocity.x < 0 else self.velocity.x
-    def move_jump(self):
+    def move_jump(self, event: pygame.event.Event):
         self.jump_number += 1
         if self.jump_number < self.jump_limit:
             self.velocity.y = -self.jump_power

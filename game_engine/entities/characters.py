@@ -1,5 +1,5 @@
 import pygame
-from game_engine.entities.dynamic import AffectedByGravity, ControllableEntity
+from game_engine.entities.dynamic import AffectedByGravity, JumpableEntity
 
 from game_engine.entities.entity import BiDirectionalEntity, Entity, EntityManager
 from game_engine.entities.particles import ExplosionParticle
@@ -37,9 +37,9 @@ class Statusbar(Entity):
 
 
 
-class Character(ControllableEntity, BiDirectionalEntity, Hurtable, AffectedByGravity, Solid):
+class Character(JumpableEntity, BiDirectionalEntity, Hurtable, AffectedByGravity, Solid):
   def __init__(self, image:pygame.Surface, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
-      ControllableEntity.__init__(self, position, size, speed, jump_power)
+      JumpableEntity.__init__(self, position, size, speed, jump_power)
       Hurtable.__init__(self, 150, 150)
       image = pygame.transform.scale(image, size)
       BiDirectionalEntity.__init__(self, image)
@@ -56,7 +56,7 @@ class Character(ControllableEntity, BiDirectionalEntity, Hurtable, AffectedByGra
 
   def update(self):
     AffectedByGravity.update(self)
-    ControllableEntity.update(self)
+    JumpableEntity.update(self)
     if self.velocity.x > 0:
       self.direction = True
     elif self.velocity.x < 0:
@@ -174,6 +174,7 @@ class Player(Character):
           ExplosionParticle.create_particles(pygame.Vector2(center), 100)
         )
         self.remove = True
+        self.on_death()
 
 class PlayerCharacter(Player):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
@@ -193,19 +194,19 @@ class PlayerCharacter(Player):
             }
         }
 
-    def move_jump(self):
+    def move_jump(self, event: pygame.event.Event):
         _, dirs = self.calculate_position(
             self.position, self.position+pygame.Vector2(0, 5))
         for entity in dirs[Direction.DOWN]:
             self.jump_number = 0
             if isinstance(entity, Enemy):
                 entity.hurt(20)
-        super().move_jump()
+        super().move_jump(event)
 
-    def attack(self):
+    def attack(self, event: pygame.event.Event):
         self.weapon.attacking = True
 
-    def action_hurt(self):
+    def action_hurt(self, event: pygame.event.Event):
         self.hurt(100)
 
     def update(self):
@@ -231,6 +232,7 @@ class PlayerCharacter(Player):
         death_sound.play()
         self.health = 0
         self.remove = True
+        self.on_death()
 
 
 class EnemyCharacter(Enemy):

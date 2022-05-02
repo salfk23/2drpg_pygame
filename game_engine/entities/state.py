@@ -26,6 +26,9 @@ class Hurtable:
   def on_health_change(self):
     pass
 
+  def on_death(self):
+    pass
+
   def die(self):
     raise NotImplementedError()
 
