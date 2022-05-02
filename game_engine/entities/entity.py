@@ -283,11 +283,17 @@ class EntityManagerInstance(IManager[Entity]):
         return lists
 
     def get_of_type(self, entity_type: type):
-        return [
+        from_ui = [
             entity
             for entity in self.ui_components.values()
             if isinstance(entity, entity_type)
         ]
+        from_entities = [
+            entity
+            for entity in self.entities.values()
+            if isinstance(entity, entity_type)
+        ]
+        return from_ui + from_entities
 
     def hide_all(self):
         for entity in self.ui_components.values():
