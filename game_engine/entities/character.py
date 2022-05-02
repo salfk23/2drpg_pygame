@@ -80,6 +80,10 @@ class WeaponizedCharacter(Character):
       self.on_weapon_change()
 
   @property
+  def anchor(self):
+      return pygame.Vector2(self.rect.midright) if self.direction else pygame.Vector2(self.rect.midleft)
+
+  @property
   def weapon(self):
     return self._weapon
 
@@ -102,9 +106,7 @@ class WeaponizedCharacter(Character):
   def on_position_change(self):
       super().on_position_change()
       if self.weapon is not None:
-        self.weapon.anchor = (pygame.Vector2(self.rect.midright)
-                              if self.direction
-                              else pygame.Vector2(self.rect.midleft))
+        self.weapon.anchor = self.anchor
 
   def on_direction_change(self):
       super().on_direction_change()
