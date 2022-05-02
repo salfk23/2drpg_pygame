@@ -6,7 +6,7 @@ from game_engine.entities.particles import ExplosionParticle
 from game_engine.entities.state import Hurtable, Solid
 from game_engine.entities.weapon import Melee, Weapon
 from game_engine.helpers import Colors, Size2D
-from assets.objects.weapon import sample_weapon
+from assets.objects.weapons import sample_weapon
 
 class Statusbar(Entity):
   def __init__(self, size: Size2D, max: int=100, current: int=100, fill_color: tuple=Colors.GREEN, background_color: tuple=Colors.RED):

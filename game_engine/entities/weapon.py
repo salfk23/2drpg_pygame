@@ -6,7 +6,7 @@ from game_engine.helpers import Size2D
 
 
 class Weapon(MovableEntity, BiDirectionalEntity):
-  def __init__(self, owner:Entity, anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
+  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
     super().__init__((0,0), size)
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Weapon"
@@ -19,7 +19,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self.frame = 0
     self._anchor = anchor
     self.attacked_entities: set[Hurtable] = set()
-    self.owner = owner
+    self.owner = None
     self.type = "None"
 
   def __str__(self):
@@ -59,13 +59,16 @@ class Weapon(MovableEntity, BiDirectionalEntity):
   def update(self):
     pass
 
+  def copy(self):
+    raise NotImplementedError
+
 
 
 
 
 class Melee(Weapon):
-  def __init__(self, owner:Entity, anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
-    super().__init__(owner, anchor, sprite, size, damage, speed)
+  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
+    super().__init__(anchor, sprite, size, damage, speed)
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Melee"
     self.type = "melee"
@@ -104,6 +107,9 @@ class Melee(Weapon):
         if entity not in self.attacked_entities:
           self.attacked_entities.add(entity)
           entity.hurt(self.damage)
+
+  def copy(self):
+    return Melee(self.anchor, self.image, self.size, self.damage, self.speed)
 
 
 

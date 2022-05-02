@@ -1,6 +1,6 @@
 
 import pygame
-from game_engine.entities.character import Enemy, Player
+from game_engine.entities.character import Enemy as EnemyConstruct , Player as PlayerConstruct
 from game_engine.entities.particles import ExplosionParticle
 
 from game_engine.helpers import Colors, Direction, Size2D
@@ -8,7 +8,7 @@ from game_engine.helpers import Colors, Direction, Size2D
 from assets.images.library import player_image
 from assets.sounds.library import death_sound
 
-class PlayerCharacter(Player):
+class Player(PlayerConstruct):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
         self.jump_limit = 3
@@ -59,6 +59,10 @@ class PlayerCharacter(Player):
         if self.position.y > 5000:
             self.die()
 
+    def hurt(self, damage: int):
+        super().hurt(damage)
+        death_sound.play()
+
     def die(self):
         center = self.rect.center
         particles = []
@@ -72,10 +76,10 @@ class PlayerCharacter(Player):
         self.on_death()
 
 
-class EnemyCharacter(Enemy):
+class Enemy(EnemyConstruct):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
         super().__init__(player_image, position, size, speed, jump_power)
-
+        self.flip_interval = 235
         self.actions = {
             pygame.KEYDOWN: {
                 pygame.K_j: self.move_right,
