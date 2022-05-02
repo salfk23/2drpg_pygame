@@ -1,6 +1,6 @@
 from typing import Callable
 import pygame
-from game_engine.entities.entity import Entity, EntityManager
+from game_engine.entities.entity import Entity, EntityManager, Hitbox
 from game_engine.entities.event import EmptyCallback, EventListener
 from game_engine.helpers import Direction, Size2D
 
@@ -73,7 +73,7 @@ class Controllable:
             else:
                 print("Unknown event type:", event_type, "for", self)
 
-class MouseControllable(Controllable):
+class MouseControllable(Controllable, Hitbox):
     def __init__(self):
         super().__init__()
         self.button_down = False

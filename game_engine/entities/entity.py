@@ -25,8 +25,11 @@ class ColoredEntity:
     self.on_color_change()
 
 
-
-class Entity:
+class Hitbox:
+  @property
+  def rect(self):
+    return pygame.Rect((0,0), (0,0))
+class Entity(Hitbox):
   def __init__(self, position:pygame.Vector2, size: Size2D):
     self._position = position
     self._size = size
@@ -183,12 +186,26 @@ class UIEntity(Entity, ColoredEntity):
     super().__init__(position, size)
     self.color = Colors.BLUE
     self.name = "UI"
-    self.show = True
+    self._show = True
     self.sprite.fill(self.color)
   def on_color_change(self):
-      pass
+    self.sprite.fill(self.color)
   def update(self):
     pass
+
+  @property
+  def show(self):
+    return self._show
+
+  @show.setter
+  def show(self, value):
+    if self._show != value:
+      self._show = value
+      self.on_show_change()
+
+  def on_show_change(self):
+    for linked in self.linked:
+      linked.show = self.show
 class EntityManagerInstance(IManager[Entity]):
     def __init__(self):
         """Create a new EntityManager instance.
@@ -242,11 +259,11 @@ class EntityManagerInstance(IManager[Entity]):
             if entity.on_screen(self.camera_position, self.config.screen_dimension)
         ]
 
-    def get_ui(self):
+    def get_ui(self, show:bool=True, all_item:bool=False):
         return [
             entity
             for entity in self.ui_components.values()
-            if entity.show
+            if all_item or entity.show == show
         ]
 
     def get_near(self, entity: Entity, radius: int):
@@ -268,9 +285,13 @@ class EntityManagerInstance(IManager[Entity]):
     def get_of_type(self, entity_type: type):
         return [
             entity
-            for entity in self.entities.values()
+            for entity in self.ui_components.values()
             if isinstance(entity, entity_type)
         ]
+
+    def hide_all(self):
+        for entity in self.ui_components.values():
+            entity.show = False
 
     def add(self, item: Entity):
         self._add_list.append(item)
