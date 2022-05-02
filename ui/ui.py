@@ -1,7 +1,8 @@
 
 from game_engine.entities.entity import EntityManager, UIEntity
-from ui.main_menu import MainMenu
-from ui.player import PlayerHealthBar
+from ui.main_menu import *
+from ui.player import *
+from ui.level_selector import *
 
 
 def register_ui():
@@ -10,6 +11,8 @@ def register_ui():
     """
     uis:list[UIEntity] = [
         MainMenu.instance(),
+        HelpMenu.instance(),
+        LevelSelector.instance(),
         PlayerHealthBar.instance()
     ]
     entity_manager = EntityManager.instance()

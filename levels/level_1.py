@@ -12,8 +12,6 @@ def level_1():
     """Level 1"""
 
     em = EntityManager.instance()
-    em.clear()
-    em.hide_all()
     ground = Tile(pygame.Vector2(20, 450), (600, 300))
     ground.name = "Ground"
 
