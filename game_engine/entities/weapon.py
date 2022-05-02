@@ -6,8 +6,8 @@ from game_engine.helpers import Size2D
 
 
 class Weapon(MovableEntity, BiDirectionalEntity):
-  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
-    super().__init__((0,0), size)
+  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, damage:int, speed:int):
+    super().__init__((0,0), (0,0))
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Weapon"
     self.image = sprite
@@ -67,8 +67,8 @@ class Weapon(MovableEntity, BiDirectionalEntity):
 
 
 class Melee(Weapon):
-  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, size:Size2D, damage:int, speed:int):
-    super().__init__(anchor, sprite, size, damage, speed)
+  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, damage:int, speed:int):
+    super().__init__(anchor, sprite, damage, speed)
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Melee"
     self.type = "melee"
@@ -109,7 +109,7 @@ class Melee(Weapon):
           entity.hurt(self.damage)
 
   def copy(self):
-    return Melee(self.anchor, self.image, self.size, self.damage, self.speed)
+    return Melee(self.anchor, self.image, self.damage, self.speed)
 
 
 
