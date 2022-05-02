@@ -1,5 +1,6 @@
 import abc
-from typing import Generic, TypeVar
+import random
+from typing import Generic, TypeVar, Union
 
 import pygame
 
@@ -145,11 +146,18 @@ class Config(ConfigInstance):
 
 
 
-def tile_texture(texture, size):
+def tile_texture(texture:Union[pygame.Surface, list[pygame.Surface]], size:Size2D):
     result = pygame.Surface(size, pygame.SRCALPHA, depth=32)
-    for x in range(0, size[0], texture.get_width()):
-        for y in range(0, size[1], texture.get_height()):
-            result.blit(texture, (x, y))
+    if isinstance(texture, pygame.Surface):
+        for x in range(0, size[0], texture.get_width()):
+            for y in range(0, size[1], texture.get_height()):
+                result.blit(texture, (x, y))
+    else:
+        texture_width = texture[0].get_width()
+        texture_height = texture[0].get_height()
+        for x in range(0, size[0], texture_width):
+            for y in range(0, size[1], texture_height):
+                result.blit(random.choice(texture), (x, y))
     return result
 
 def gradient_rect(left_colour, right_colour, target_rect: pygame.Rect):
