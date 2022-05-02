@@ -1,3 +1,4 @@
+from ctypes import Union
 import math
 import pygame
 from game_engine.entities.event import EventListener
@@ -37,7 +38,7 @@ class Entity(Hitbox):
     self._remove = False
     self._name = "Entity"
     # Make a rectangle with color green
-    sprite = pygame.Surface(size)
+    sprite = pygame.Surface(size, pygame.SRCALPHA)
     self._sprite = pygame.transform.rotate(
       pygame.transform.scale(sprite, self.size), 0)
 
@@ -298,8 +299,12 @@ class EntityManagerInstance(IManager[Entity]):
     def hide_all(self):
         for entity in self.ui_components.values():
             entity.show = False
-
-    def add(self, item: Entity):
+    # Add list or Entity
+    def add(self, item: Union[Entity, list[Entity]]):
+      if isinstance(item, list):
+        for entity in item:
+          self.add(entity)
+      else:
         self._add_list.append(item)
         for linked in item.linked:
             self.add(linked)
