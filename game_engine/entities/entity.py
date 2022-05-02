@@ -33,14 +33,12 @@ class Hitbox:
 class Entity(Hitbox):
   def __init__(self, position:pygame.Vector2, size: Size2D):
     self._position = position
-    self._size = size
     # Remove from the entity manager
     self._remove = False
     self._name = "Entity"
     # Make a rectangle with color green
     sprite = pygame.Surface(size, pygame.SRCALPHA)
-    self._sprite = pygame.transform.rotate(
-      pygame.transform.scale(sprite, self.size), 0)
+    self._sprite = pygame.transform.scale(sprite, size)
 
     self.linked: list[Entity] = []
 
@@ -70,12 +68,10 @@ class Entity(Hitbox):
 
   @property
   def size(self):
-    return self._size
+    return self.sprite.get_size()
   @size.setter
   def size(self, size:Size2D):
-    self._size = size
-    self.sprite = pygame.transform.rotate(
-      pygame.transform.scale(self.sprite, self.size), 0)
+    self.sprite = pygame.transform.scale(self.sprite, size)
   def calculate_position(self, old_position:pygame.Vector2, new_position:pygame.Vector2):
     pass
 
