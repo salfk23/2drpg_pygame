@@ -146,8 +146,15 @@ class Config(ConfigInstance):
 
 
 def tile_texture(texture, size):
-    result = pygame.Surface(size, depth=32)
+    result = pygame.Surface(size, pygame.SRCALPHA, depth=32)
     for x in range(0, size[0], texture.get_width()):
         for y in range(0, size[1], texture.get_height()):
             result.blit(texture, (x, y))
     return result
+
+def gradient_rect(left_colour, right_colour, target_rect: pygame.Rect):
+    """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
+    colour_rect = pygame.Surface( ( 2, 2 ) )                                   # tiny! 2x2 bitmap
+    pygame.draw.line( colour_rect, left_colour,  ( 0,0 ), ( 0,1 ) )            # left colour line
+    pygame.draw.line( colour_rect, right_colour, ( 1,0 ), ( 1,1 ) )            # right colour line
+    return pygame.transform.smoothscale( colour_rect, ( target_rect.width, target_rect.height ) )  # stretch!

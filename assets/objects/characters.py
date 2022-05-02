@@ -81,15 +81,15 @@ class Enemy(EnemyConstruct):
         super().__init__(player_image, position, size, speed, jump_power)
         self.flip_interval = 235
         self.actions = {
-            pygame.KEYDOWN: {
-                pygame.K_j: self.move_right,
-                pygame.K_l: self.move_left,
-                pygame.K_i: self.move_jump,
-            },
-            pygame.KEYUP:  {
-                pygame.K_j: self.stop_right,
-                pygame.K_l: self.stop_left,
-            }
+            # pygame.KEYDOWN: {
+            #     pygame.K_j: self.move_right,
+            #     pygame.K_l: self.move_left,
+            #     pygame.K_i: self.move_jump,
+            # },
+            # pygame.KEYUP:  {
+            #     pygame.K_j: self.stop_right,
+            #     pygame.K_l: self.stop_left,
+            # }
         }
 
     def update(self):
@@ -97,6 +97,11 @@ class Enemy(EnemyConstruct):
         new_position, dirs = self.calculate_position(
             self.position, self.new_position)
         self.position = new_position
+
+        if len(dirs[Direction.DOWN]) > 0:
+            self.velocity.y = 0 if self.velocity.y > 0 else self.velocity.y
+        if len(dirs[Direction.UP]) > 0:
+            self.velocity.y = 0
 
         if self.position.y > 5000:
             self.die()

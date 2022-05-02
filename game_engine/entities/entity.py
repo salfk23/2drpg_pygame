@@ -1,4 +1,4 @@
-from ctypes import Union
+from typing import Union
 import math
 import pygame
 from game_engine.entities.event import EventListener
@@ -207,6 +207,10 @@ class UIEntity(Entity, ColoredEntity):
   def on_show_change(self):
     for linked in self.linked:
       linked.show = self.show
+class BackgroundEntity(Entity):
+  def __init__(self, position:pygame.Vector2, size:Size2D):
+    super().__init__(position, size)
+    self.name = "Background"
 class EntityManagerInstance(IManager[Entity]):
     def __init__(self):
         """Create a new EntityManager instance.
@@ -215,6 +219,7 @@ class EntityManagerInstance(IManager[Entity]):
         """
         self._entities: dict[int, Entity] = {}
         self._ui_components: dict[int, UIEntity] = {}
+        self._background: dict[int, BackgroundEntity] = {}
         self._remove_list: list[Entity] = []
         self._add_list: list[Entity] = []
         self.config = Config.instance()
@@ -227,6 +232,9 @@ class EntityManagerInstance(IManager[Entity]):
     @property
     def ui_components(self):
         return self._ui_components
+    @property
+    def background(self):
+        return self._background
 
     @property
     def position(self):
@@ -239,10 +247,13 @@ class EntityManagerInstance(IManager[Entity]):
         for entity in self._remove_list:
             self._entities.pop(id(entity), None)
             self._ui_components.pop(id(entity), None)
+            self._background.pop(id(entity), None)
         self._remove_list.clear()
         for entity in self._add_list:
             if isinstance(entity, UIEntity):
                 self._ui_components[id(entity)] = entity
+            elif isinstance(entity, BackgroundEntity):
+                self._background[id(entity)] = entity
             else:
               self._entities[id(entity)] = entity
         self._add_list.clear()
@@ -260,11 +271,23 @@ class EntityManagerInstance(IManager[Entity]):
             if entity.on_screen(self.camera_position, self.config.screen_dimension)
         ]
 
+    def get_on_screen_bg(self):
+      return [
+        entity
+        for entity in self.background.values()
+        if entity.on_screen(self.camera_position, self.config.screen_dimension)
+      ]
+
     def get_ui(self, show:bool=True, all_item:bool=False):
         return [
             entity
             for entity in self.ui_components.values()
             if all_item or entity.show == show
+        ]
+    def get_background(self):
+        return [
+            entity
+            for entity in self.background.values()
         ]
 
     def get_near(self, entity: Entity, radius: int):
@@ -316,6 +339,8 @@ class EntityManagerInstance(IManager[Entity]):
 
     def clear(self):
         for entity in self.entities.values():
+            entity.remove = True
+        for entity in self.background.values():
             entity.remove = True
 
 @Singleton[EntityManagerInstance]
