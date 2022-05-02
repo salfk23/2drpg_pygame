@@ -30,11 +30,11 @@ goblin_image = pygame.image.load("assets\\images\\goblin.png")
 zombie_image = pygame.image.load("assets\\images\\zombie.png")
 knight_image = pygame.image.load("assets\\images\\knight.png")
 
-item_battleaxe_image = pygame.image.load("assets\\images\\item_battleaxe.png")
-item_mace_image = pygame.image.load("assets\\images\\item_mace.png")
-item_silversword_image = pygame.image.load("assets\\images\\item_silversword.png")
-item_trident_image = pygame.image.load("assets\\images\\item_trident.png")
-item_warhammer_image = pygame.image.load("assets\\images\\item_warhammer.png")
+battleaxe_image = pygame.image.load("assets\\images\\item_battleaxe.png")
+mace_image = pygame.image.load("assets\\images\\item_mace.png")
+silversword_image = pygame.image.load("assets\\images\\item_silversword.png")
+trident_image = pygame.image.load("assets\\images\\item_trident.png")
+warhammer_image = pygame.image.load("assets\\images\\item_warhammer.png")
 
 grass_images = [grass_1_image, grass_2_image, grass_3_image,
                 grass_4_image, grass_5_image, grass_6_image]
@@ -63,7 +63,11 @@ for image in tree_images.copy():
 tree_images = tree_images[len(tree_images)//2:]
 
 
-decor_images = [
+foliage_images = [
   mushroom_1_image, mushroom_2_image, mushroom_3_image,
-  sign_1_image, statue_1_image, grass_top_1_image, grass_top_2_image
+  grass_top_1_image, grass_top_2_image
+]
+
+decor_images = [
+  sign_1_image, statue_1_image
 ]
