@@ -6,7 +6,7 @@ from game_engine.entities.entity import EntityManager
 from game_engine.entities.world_objects import Tile
 
 from ui.player import PlayerHUD
-from assets.images.library import dirt_image
+from assets.images import dirt_image
 from assets.objects.weapons import sample_weapon
 
 def run():

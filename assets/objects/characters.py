@@ -5,12 +5,13 @@ from game_engine.entities.particles import ExplosionParticle
 
 from game_engine.helpers import Colors, Direction, Size2D
 
-from assets.images.library import player_image
-from assets.sounds.library import death_sound
+from assets.images import knight_image, player_image
+from assets.sounds import death_sound
 
 class Player(PlayerConstruct):
-    def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int):
-        super().__init__(player_image, position, size, speed, jump_power)
+    def __init__(self, position: pygame.Vector2, speed: int, jump_power: int):
+        super().__init__(knight_image, position, (50, 70) , speed, jump_power)
+        self.name = "Player"
         self.jump_limit = 3
         self.stomp_damage = 40
         self.actions = {
@@ -29,6 +30,12 @@ class Player(PlayerConstruct):
                 pygame.BUTTON_LEFT: self.attack,
             }
         }
+
+    @property
+    def anchor(self):
+        return (pygame.Vector2(self.rect.midright) + pygame.Vector2(-10, 9)
+                if self.direction else
+                pygame.Vector2(self.rect.midleft) + pygame.Vector2(10, 9))
 
     def move_jump(self, event: pygame.event.Event):
         _, dirs = self.calculate_position(
@@ -91,6 +98,7 @@ class Enemy(EnemyConstruct):
             #     pygame.K_l: self.stop_left,
             # }
         }
+        self.name = "Enemy"
 
     def update(self):
         super().update()
