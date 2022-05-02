@@ -10,7 +10,7 @@ from game_engine.helpers import Colors, Config, IConfigListener, Singleton
 class RendererInstance(IConfigListener):
     def __init__(self):
         self.config = Config.instance()
-        self.window = pygame.display.set_mode(self.config.screen_dimension)
+        self.window = pygame.display.set_mode(self.config.screen_dimension, pygame.HWSURFACE | pygame.DOUBLEBUF) # | pygame.RESIZABLE)
         self.entity_manager = EntityManager.instance()
         self._camera = pygame.Vector2(0, 0)
         self.config.add_listener(self)
