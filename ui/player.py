@@ -1,5 +1,5 @@
 import pygame
-from game_engine.entities.characters import Statusbar
+from game_engine.entities.character import Statusbar
 from game_engine.entities.entity import EntityManager, UIEntity
 from game_engine.entities.state import Hurtable
 from game_engine.entities.ui import UIButton
