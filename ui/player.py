@@ -51,7 +51,7 @@ class GameOverInstance(UIEntity, IConfigListener):
         (width, height)
       )
       self.config.add_listener(self)
-      self.color = Colors.YELLOW
+      self.color = Colors.UI
 
       self.name = "GAME_OVER"
 
@@ -67,7 +67,7 @@ class GameOverInstance(UIEntity, IConfigListener):
       self.sprite.blit(text, ((width-text.get_width())/2, 75))
 
 
-      button_bgcolor = Colors.PURPLE
+      button_bgcolor = Colors.BUTTON
       button_font_color = Colors.WHITE
       button_sprite, button_size = UIButton.center_button_sprite(
           "X", pygame.font.get_default_font(), 18, button_font_color, button_bgcolor,

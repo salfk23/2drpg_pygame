@@ -14,7 +14,7 @@ class UIButton(UIEntity, MouseControllable):
     text:str,
     font_type:str="monospace", font_size:int=30,
     color:pygame.Color=Colors.BLACK,
-    bg_color:pygame.Color=Colors.YELLOW,
+    bg_color:pygame.Color=Colors.BUTTON,
     padding:int=0,
     button_size:Size2D=(-1,-1)
   ):

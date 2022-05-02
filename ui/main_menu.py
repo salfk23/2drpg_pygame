@@ -16,7 +16,7 @@ class MainMenuInstance(UIEntity, IConfigListener):
           pygame.Vector2((screen_w-width)/2,(screen_h-height)/2),
           (width, height)
         )
-        self.color = Colors.YELLOW
+        self.color = Colors.UI
         self.config.add_listener(self)
 
         midtop = pygame.Vector2(self.rect.midtop)
@@ -25,7 +25,7 @@ class MainMenuInstance(UIEntity, IConfigListener):
         text = font.render("2D RPG Game", True, Colors.BLACK)
         self.sprite.blit(text, ((width-text.get_width())/2, 10))
 
-        button_bgcolor = Colors.PURPLE
+        button_bgcolor = Colors.BUTTON
         button_font_color = Colors.WHITE
         button_sprite, button_size = UIButton.center_button_sprite(
             "Play Game", "monospace", 30, button_font_color, button_bgcolor,
@@ -95,7 +95,7 @@ class HelpMenuInstance(UIEntity, IConfigListener):
           pygame.Vector2((screen_w-width)/2,(screen_h-height)/2),
           (width, height)
         )
-        self.color = Colors.YELLOW
+        self.color = Colors.UI
         self.config.add_listener(self)
 
         midtop = pygame.Vector2(self.rect.midtop)
@@ -105,7 +105,7 @@ class HelpMenuInstance(UIEntity, IConfigListener):
         text = font.render("Help Menu", True, Colors.BLACK)
         self.sprite.blit(text, ((width-text.get_width())/2, 10))
 
-        button_bgcolor = Colors.PURPLE
+        button_bgcolor = Colors.BUTTON
         button_font_color = Colors.WHITE
         button_sprite, button_size = UIButton.center_button_sprite(
             "X", pygame.font.get_default_font(), 18, button_font_color, button_bgcolor,

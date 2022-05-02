@@ -30,6 +30,8 @@ class Colors:
     YELLOW = (255, 255, 0)
     PURPLE = (255, 0, 255)
     CYAN = (0, 255, 255)
+    BUTTON = (150, 150, 150)
+    UI = (222, 222, 222)
 
 T = TypeVar('T')
 
