@@ -33,9 +33,9 @@ class Player(PlayerConstruct):
 
     @property
     def anchor(self):
-        return (pygame.Vector2(self.rect.midright) + pygame.Vector2(-10, 9)
+        return (pygame.Vector2(self.rect.midright) + pygame.Vector2(-10, 15)
                 if self.direction else
-                pygame.Vector2(self.rect.midleft) + pygame.Vector2(10, 9))
+                pygame.Vector2(self.rect.midleft) + pygame.Vector2(10, 15))
 
     def move_jump(self, event: pygame.event.Event):
         _, dirs = self.calculate_position(
