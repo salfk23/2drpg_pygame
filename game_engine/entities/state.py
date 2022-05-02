@@ -2,7 +2,19 @@
 class Hurtable:
   def __init__(self, health: int, max_health: int):
     self._health = health
-    self.max_health = max_health
+    self._max_health = max_health
+
+  @property
+  def max_health(self):
+    return self._max_health
+
+  @max_health.setter
+  def max_health(self, max_health: int):
+    if max_health != self.max_health and max_health > -1:
+      self._max_health = max_health
+      if self.health > max_health:
+        self.health = max_health
+      self.on_health_change()
 
   @property
   def health(self):
