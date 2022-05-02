@@ -13,7 +13,8 @@ def register_ui():
         MainMenu.instance(),
         HelpMenu.instance(),
         LevelSelector.instance(),
-        PlayerHealthBar.instance()
+        PlayerHUD.instance(),
+        GameOver.instance(),
     ]
     entity_manager = EntityManager.instance()
     for ui in uis:

@@ -6,7 +6,7 @@ from game_engine.entities.entity import EntityManager
 from game_engine.entities.world_objects import Tile
 from game_engine.helpers import Colors
 from assets.images import dirt_image
-from ui.player import PlayerHealthBar
+from ui.player import PlayerHUD
 
 def level_1():
     """Level 1"""
@@ -24,21 +24,13 @@ def level_1():
     player.name = "Player"
     # en.name = "Enemy"
     # en.direction = False
-    player.color = Colors.BLUE
-    player_healthbar = PlayerHealthBar.instance()
-    player_healthbar.watch_hurtable(player)
-    player_healthbar.show = True
-    def on_death():
-        print("You died!")
-        em.clear()
-        em.hide_all()
-        for ui in em.get_ui(all_item=True):
-            if ui.name == "BTN_START":
-                ui.show = True
-
-    player.on_death = on_death
     wall.name = "Wall"
     em.add(ground)
     em.add(wall)
     em.add(player)
+
+    player_healthbar = PlayerHUD.instance()
+    player_healthbar.watch_hurtable(player)
+    player_healthbar.show = True
+
     em.focused_entity = player
