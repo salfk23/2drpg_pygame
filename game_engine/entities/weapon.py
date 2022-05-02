@@ -76,8 +76,8 @@ class Melee(Weapon):
   def update(self):
     if self.attacking:
       self.frame += self.speed
-      if self.frame < 270:
-        frame = self.frame if self.frame < 180 else 180 - (self.frame - 180)*2
+      if self.frame < 150:
+        frame = self.frame if self.frame < 100 else 100 - (self.frame - 100)*2
 
         if self.direction:
           self.sprite = pygame.transform.rotozoom(self.sprites[self.direction], -frame, 1)
