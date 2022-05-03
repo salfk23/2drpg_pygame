@@ -71,13 +71,19 @@ def run():
     # Player and other entities declaration
     player = Player(pygame.Vector2(220, 300), 5, 10)
 
-    en = Enemy(pygame.Vector2(300, 300), (40, 60), 5, 10)
-    en_2 = Zombie(pygame.Vector2(500, 300))
-    en_3 = Goblin(pygame.Vector2(600, 300))
-    en_4 = Minotaur(pygame.Vector2(700, 300))
-    en_5 = Demon(pygame.Vector2(800, 300))
+    enemies = []
 
-    enemies = [en, en_2, en_3, en_4, en_5]
+    for x in range(500, 2000, 500):
+        enemies.append(Zombie(pygame.Vector2(x, 300)))
+
+    for x in range(2000, 5000, 500):
+        enemies.append(Goblin(pygame.Vector2(x, 300)))
+
+    for x in range(5000, 7000, 500):
+        enemies.append(Minotaur(pygame.Vector2(x, 300)))
+
+    enemies.append(Demon(pygame.Vector2(8000, 300)))
+
     # Tweaks
 
 
@@ -86,10 +92,6 @@ def run():
     grass.sprite = tile_texture(grass_images, grass.size)
 
     player.weapon = silversword.copy()
-
-    en.name = "Enemy"
-    en.direction = False
-    en.weapon = sample_weapon.copy()
 
     player_healthbar = PlayerHUD.instance()
     player_healthbar.watch_hurtable(player)

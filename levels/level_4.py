@@ -1,51 +1,120 @@
 
 
+import random
 import pygame
-from assets.objects.characters import Enemy, Player
-from game_engine.entities.entity import EntityManager
+from assets.objects.characters import Demon, Enemy, Goblin, Minotaur, Player, Zombie
+from game_engine.entities.entity import BackgroundEntity, Entity, EntityManager
 from game_engine.entities.world_objects import Tile
 
-from ui.player import PlayerHUD
-from assets.images import dirt_image
-from assets.objects.weapons import sample_weapon
+from ui.player import GameWin, PlayerHUD
+from assets.images import dirt_image, grass_images, tree_images, foliage_images
+from assets.objects.weapons import *
+from game_engine.helpers import gradient_rect, tile_texture
+
 
 def run():
     print("Level 4")
     em = EntityManager.instance()
-
     # World Objects declaration
-    ground = Tile(pygame.Vector2(20, 450), (600, 300))
-    wall = Tile(pygame.Vector2(20, 400), (20, 70))
+    GROUND_LEVEL = 500
+    WORLD_LENGTH = 10000
+
+    sky = BackgroundEntity( pygame.Vector2(-1000, -500),
+                            (WORLD_LENGTH, GROUND_LEVEL+505))
+    sky.sprite = pygame.transform.rotate(
+        gradient_rect(
+            pygame.color.Color("#cdf9ff"),
+            pygame.color.Color("#75d5e3"),
+            pygame.Rect(0, 0, GROUND_LEVEL+505, WORLD_LENGTH)
+        ), 90)
+
+    grass = Entity(pygame.Vector2(-1000, GROUND_LEVEL-11), (WORLD_LENGTH, 40))
+    invisible_ground = Tile(
+        pygame.Vector2(-1000, GROUND_LEVEL), (WORLD_LENGTH, 50))
+    ground = Tile(pygame.Vector2(-1000, 525), (WORLD_LENGTH, 300))
+    invisible_walls = [
+        Tile(pygame.Vector2(0, 0), (20, 500)),
+        Tile(pygame.Vector2(WORLD_LENGTH-2000, 0), (20, 500))
+    ]
+
+    background: list[Entity] = []
+
+    tree_size = pygame.Vector2(60, 90)
+    for x in range(-500, WORLD_LENGTH-1200, 100):
+        # Increase tree tree_size by multiplying by random number
+        size = tree_size * random.uniform(0.8, 3)
+        # Randomize tree position
+        tree = BackgroundEntity(
+            pygame.Vector2(x + random.randint(-300, 300),
+            GROUND_LEVEL-size.y+5),
+            size
+        )
+        tree.sprite = pygame.transform.scale(random.choice(tree_images), size)
+        background.append(tree)
+
+        int_decoration = random.randint(0, 3)
+
+        for i in range(int_decoration):
+            foilage_image = random.choice(foliage_images)
+            # Decrease foilage size by multiplying by random number
+            size = pygame.Vector2(15, 15) * random.uniform(1, 2)
+            decoration = Entity(
+                pygame.Vector2(x + random.randint(-100, 100),
+                GROUND_LEVEL-size.y+5),
+                pygame.Vector2(0, 0)
+            )
+            decoration.sprite = pygame.transform.scale(foilage_image, size)
+            background.append(decoration)
+
+
 
     # Player and other entities declaration
-    player = Player(pygame.Vector2(220, 300), (40, 40), 5, 10)
-    en = Enemy(pygame.Vector2(300, 300), (40, 60), 5, 10)
+    player = Player(pygame.Vector2(220, 300), 5, 10)
+
+    enemies = []
+    HEALTH_MULTIPLIER = 1.5
+    for x in range(500, 1000, 500):
+        enemy = Zombie(pygame.Vector2(x, 300))
+        enemy.max_health = enemy.health = enemy.health*HEALTH_MULTIPLIER
+        enemies.append(enemy)
+
+    for x in range(1000, 5000, 500):
+        enemy = Goblin(pygame.Vector2(x, 300))
+        enemy.max_health = enemy.health = enemy.health*HEALTH_MULTIPLIER
+        enemies.append(enemy)
+
+    for x in range(5000, 7000, 500):
+        enemy = Minotaur(pygame.Vector2(x, 300))
+        enemy.max_health = enemy.health = enemy.health*HEALTH_MULTIPLIER
+        enemies.append(enemy)
+
+    enemy = Demon(pygame.Vector2(8000, 300))
+    enemy.max_health = enemy.health = enemy.health*HEALTH_MULTIPLIER
+    enemies.append(enemy)
 
     # Tweaks
-    ground.name = "Ground"
-    ground.sprite = pygame.transform.scale(dirt_image, ground.size)
 
-    wall.name = "Wall"
 
-    player.name = "Player"
-    player.weapon = sample_weapon.copy()
 
-    en.name = "Enemy"
-    en.direction = False
-    en.weapon = sample_weapon.copy()
+    ground.sprite = tile_texture(dirt_image, ground.size)
+    grass.sprite = tile_texture(grass_images, grass.size)
 
+    player.weapon = silversword.copy()
 
     player_healthbar = PlayerHUD.instance()
     player_healthbar.watch_hurtable(player)
     player_healthbar.show = True
 
-
     # Add world objects first
     em.add(ground)
-    em.add(wall)
+    em.add(invisible_ground)
+    em.add(grass)
+    em.add(invisible_walls)
     # Then other entities
     em.add(player)
-    em.add(en)
-
+    em.add(enemies)
+    # Then background objects
+    em.add(sky)
+    em.add(background)
     # Focus on player
     em.focused_entity = player
