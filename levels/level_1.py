@@ -82,7 +82,7 @@ def run():
     for x in range(5000, 7000, 500):
         enemies.append(Minotaur(pygame.Vector2(x, 300)))
 
-    enemies.append(Demon(pygame.Vector2(8000, 300)))
+    enemies.append(Demon(pygame.Vector2(7500, 300)))
 
     # Tweaks
 

@@ -83,7 +83,7 @@ def run():
         enemy.max_health = enemy.health = enemy.health*HEALTH_MULTIPLIER
         enemies.append(enemy)
 
-    enemy = Demon(pygame.Vector2(8000, 300))
+    enemy = Demon(pygame.Vector2(7500, 300))
     enemy.max_health = enemy.health = enemy.health*HEALTH_MULTIPLIER
     enemies.append(enemy)
 
