@@ -34,6 +34,6 @@ Press `S` to harm self (by 100 points if you get stuck).
 <!-- Show UML.png from ./UML.png -->
 ### UML Diagram
 <!-- Show UML.png from ./UML.png -->
-![UML Diagram](./UML.png)
+![UML Diagram](./UML_renewed.png)
 
 
