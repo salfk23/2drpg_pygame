@@ -3,10 +3,10 @@ import game_engine.helpers as helpers
 
 pygame.mixer.init()
 
-game_music = pygame.mixer.Sound("assets/sounds/game_run.wav")
+game_music = pygame.mixer.Sound("assets/sounds/game_run.ogg")
 main_menu_music = pygame.mixer.Sound("assets/sounds/main_menu.wav")
 
-game_over_sound = pygame.mixer.Sound("assets/sounds/game_over.wav")
+game_over_sound = pygame.mixer.Sound("assets/sounds/game_over.ogg")
 
 explode_sound = pygame.mixer.Sound("assets/sounds/explode.wav")
 death_sound = pygame.mixer.Sound("assets\sounds\death.ogg")
