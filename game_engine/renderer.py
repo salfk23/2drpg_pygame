@@ -48,9 +48,18 @@ class RendererInstance(IConfigListener):
             self.window.blit(entity.sprite, entity.position+offset)
 
         # Debug hitbox visualization
+        colors = [
+            Colors.RED,
+            Colors.GREEN,
+            Colors.BLUE,
+            Colors.YELLOW,
+            Colors.CYAN,
+            Colors.BLACK
+        ]
+
         # for entity in on_screen:
-        #     pygame.draw.circle(self.window, Colors.PURPLE, entity.position+offset, 3)
-        #     pygame.draw.rect(self.window, Colors.PURPLE, entity.sprite.get_rect(topleft=entity.position+offset), 1)  # The rect.
+        #     pygame.draw.circle(self.window, colors[(id(entity)//16)%len(colors)], pygame.Vector2(entity.rect.bottomleft)+offset, 3)
+        #     pygame.draw.rect(self.window, colors[(id(entity)//16)%len(colors)], entity.sprite.get_rect(topleft=entity.position+offset), 1)  # The rect.
 
         for ui in self.entity_manager.get_ui():
             self.window.blit(ui.sprite, ui.position)
