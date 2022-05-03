@@ -15,6 +15,7 @@ def register_ui():
         LevelSelector.instance(),
         PlayerHUD.instance(),
         GameOver.instance(),
+        GameWin.instance()
     ]
     entity_manager = EntityManager.instance()
     for ui in uis:
