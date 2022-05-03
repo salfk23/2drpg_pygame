@@ -92,6 +92,7 @@ class Enemy(EnemyConstruct):
     def __init__(self, position: pygame.Vector2, size: Size2D, speed: int, jump_power: int, image=player_image):
         super().__init__(image, position, size, speed, jump_power)
         self.flip_interval = 235
+        self.direction = False
         self.actions = {
             # pygame.KEYDOWN: {
             #     pygame.K_j: self.move_right,
@@ -131,7 +132,7 @@ class Zombie(Enemy):
     def __init__(self, position: pygame.Vector2):
         super().__init__(position, (50, 70), 3, 5, image=zombie_image)
         self.name = "Zombie"
-        self.weapon = claws
+        self.weapon = claws.copy()
         self.max_health = 50
 
     @property
@@ -159,7 +160,7 @@ class Goblin(Enemy):
     def __init__(self, position: pygame.Vector2):
         super().__init__(position, (50, 70), 3, 5, image=goblin_image)
         self.name = "Goblin"
-        self.weapon = mace
+        self.weapon = mace.copy()
         self.health = self.max_health = 125
 
     @property
