@@ -74,6 +74,13 @@ class MainMenuInstance(UIEntity, IConfigListener):
         width, height = self.config.screen_dimension
         self.center = (width/2, height/2)
 
+    def on_show_change(self):
+        super().on_show_change()
+        if self.show:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load("assets/sounds/main_menu.wav")
+            pygame.mixer.music.play(-1)
+
     def config_change_events(self):
         return {
             IConfigListener.SCREEN_DIMENSION: self.on_screen_change
