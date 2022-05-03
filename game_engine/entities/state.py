@@ -1,5 +1,6 @@
-
+"""Entity state module. Used to declare states for entities."""
 class Hurtable:
+  """Can be hurt and die"""
   def __init__(self, health: int, max_health: int):
     self._health = health
     self._max_health = max_health
@@ -46,4 +47,5 @@ class Hurtable:
 
 
 class Solid:
+  """Solid, Can be jumped on"""
   pass

@@ -1,3 +1,5 @@
+"""Get images and register them as pygame.Surface object
+"""
 import pygame
 
 player_image = pygame.image.load("assets\\images\\player.png")
@@ -45,7 +47,8 @@ _max_height = max([image.get_height() for image in grass_images])
 # create a list of grass images that are the same height as the largest
 # grass image by adding a transparent background to the top of each image
 for image in grass_images.copy():
-    transparent_image = pygame.Surface((image.get_width(), _max_height), pygame.SRCALPHA)
+    transparent_image = pygame.Surface(
+        (image.get_width(), _max_height), pygame.SRCALPHA)
     transparent_image.blit(image, (0, _max_height - image.get_height()))
     grass_images.append(transparent_image)
 
@@ -56,7 +59,8 @@ tree_images = [tree_1_image, tree_2_image, tree_3_image, tree_4_image]
 _max_height = max([image.get_height() for image in tree_images])
 
 for image in tree_images.copy():
-    transparent_image = pygame.Surface((image.get_width(), _max_height), pygame.SRCALPHA)
+    transparent_image = pygame.Surface(
+        (image.get_width(), _max_height), pygame.SRCALPHA)
     transparent_image.blit(image, (0, _max_height - image.get_height()))
     tree_images.append(transparent_image)
 
@@ -64,10 +68,10 @@ tree_images = tree_images[len(tree_images)//2:]
 
 
 foliage_images = [
-  mushroom_1_image, mushroom_2_image, mushroom_3_image,
-  grass_top_1_image, grass_top_2_image
+    mushroom_1_image, mushroom_2_image, mushroom_3_image,
+    grass_top_1_image, grass_top_2_image
 ]
 
 decor_images = [
-  sign_1_image, statue_1_image
+    sign_1_image, statue_1_image
 ]

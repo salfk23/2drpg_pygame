@@ -1,5 +1,6 @@
+"""Get sounds and register them as pygame.mixer.Sound object
+"""
 import pygame
-import game_engine.helpers as helpers
 
 pygame.mixer.init()
 

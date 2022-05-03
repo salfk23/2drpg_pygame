@@ -1,19 +1,23 @@
+"""Get images and register them as character (Player and Enemies)
+"""
+import pygame
 
 from threading import Timer
-import pygame
-from game_engine.entities.character import Enemy as EnemyConstruct , Player as PlayerConstruct
-from game_engine.entities.particles import ExplosionParticle
 
+from game_engine.entities.character import Enemy as EnemyConstruct, Player as PlayerConstruct
+from game_engine.entities.particles import ExplosionParticle
 from game_engine.helpers import Colors, Direction, Size2D
 
 from assets.images import *
 from assets.sounds import *
 from assets.objects.weapons import *
+
 from ui.player import GameWin
+
 
 class Player(PlayerConstruct):
     def __init__(self, position: pygame.Vector2, speed: int, jump_power: int):
-        super().__init__(knight_image, position, (50, 70) , speed, jump_power)
+        super().__init__(knight_image, position, (50, 70), speed, jump_power)
         self.name = "Player"
         self.jump_limit = 3
         self.stomp_damage = 40
@@ -29,7 +33,7 @@ class Player(PlayerConstruct):
                 pygame.K_d: self.stop_right,
                 pygame.K_a: self.stop_left,
             },
-            pygame.MOUSEBUTTONDOWN:{
+            pygame.MOUSEBUTTONDOWN: {
                 pygame.BUTTON_LEFT: self.attack,
             }
         }
@@ -79,7 +83,7 @@ class Player(PlayerConstruct):
         particles = []
         for color in [Colors.RED, Colors.YELLOW, Colors.GREEN, Colors.BLACK]:
             particles.extend(ExplosionParticle.create_particles(
-            pygame.Vector2(center), 35, color=color, size=(5, 15)))
+                pygame.Vector2(center), 35, color=color, size=(5, 15)))
         explode_sound.play()
         ExplosionParticle.register_particles(particles)
         death_sound.play()
@@ -155,7 +159,6 @@ class Zombie(Enemy):
         zombie_death_sound.play()
 
 
-
 class Goblin(Enemy):
     def __init__(self, position: pygame.Vector2):
         super().__init__(position, (50, 70), 3, 5, image=goblin_image)
@@ -216,9 +219,9 @@ class Demon(Enemy):
         super().__init__(position, (125, 175), 3, 5, image=devil_image)
         self.name = "Demon"
         self.weapon = Melee(
-            pygame.Vector2(0,0),
+            pygame.Vector2(0, 0),
             pygame.transform.scale(trident_image, (100, 150)),
-        95, 5)
+            95, 5)
         self.weapon.on_hit_sounds = hit_sharp_sounds
         self.attack_distance = self.weapon.size[1] + 200
         self.max_health = self.health = 666
@@ -246,9 +249,9 @@ class Demon(Enemy):
     def on_death(self):
         super().on_death()
         # wait for 5 seconds
+
         def on_death():
             GameWin.instance().show = True
             print("You win!")
-        on_wait = Timer(3,on_death)
+        on_wait = Timer(3, on_death)
         on_wait.start()
-

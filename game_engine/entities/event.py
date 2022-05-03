@@ -6,13 +6,16 @@ PyGame_EventType = int
 PyGame_EventKey = int
 # Make a lambda with 2 parameters
 EmptyCallback = lambda e: None
+"""EmptyCallback is a lambda function that takes a pygame event as a parameter."""
 class EventListenerInstance:
+    """Event Listener object. Used to detect input"""
     def __init__(self):
         self.event_listener: dict[PyGame_EventType, dict[int, Callable]] = {}
         self._remove_queue: dict[PyGame_EventType, list[int]] = {}
         self._add_queue: dict[PyGame_EventType, dict[int, Callable]] = {}
 
-    def update(self, event_type: PyGame_EventType, obj:object, callback: Callable):
+    def update(self, event_type: PyGame_EventType,
+               obj:object, callback: Callable):
         # Check if callback have 1 argument
         if len(callback.__code__.co_varnames) != 1:
             raise ValueError("Callback must have 1 argument")

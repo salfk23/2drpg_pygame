@@ -1,3 +1,4 @@
+"""Game Engine module."""
 import pygame
 from game_engine.entities.event import EventListener
 from game_engine.entities.entity import EntityManager
@@ -17,13 +18,20 @@ class GameEngineInstance:
         self.running = False
         # Event listener, int and function dictionary
         self.event_listener = EventListener.instance()
-        self.event_listener.update(pygame.QUIT, id(self), lambda e: self.stop(e))
+        self.event_listener.update(
+            pygame.QUIT, id(self), lambda e: self.stop(e))
 
-    def stop(self, event:pygame.event.Event):
+    def stop(self, event: pygame.event.Event):
+        """Stop the game engine
+
+        Args:
+            event (pygame.event.Event): Event that triggered the stop
+        """
         print('Stopping Game engine')
         self.running = False
 
     def run(self):
+        """Run the game engine"""
         self.running = True
         clock = pygame.time.Clock()
 

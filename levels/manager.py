@@ -1,4 +1,4 @@
-
+"""Registers all levels"""
 
 import pygame
 from game_engine.entities.entity import EntityManager
@@ -10,25 +10,26 @@ from levels.level_5 import run as level_5
 from levels.level_6 import run as level_6
 
 
-
 _levels = {
-  "1": level_1,
-  "2": level_2,
-  "3": level_3,
-  "4": level_4,
-  "5": level_5,
-  "6": level_6,
+    "1": level_1,
+    "2": level_2,
+    "3": level_3,
+    "4": level_4,
+    "5": level_5,
+    "6": level_6,
 }
 
-def get_levels():
-  return list(_levels.keys())
 
-def load_level(level_id:str):
-  pygame.mixer.music.stop()
-  em = EntityManager.instance()
-  em.clear()
-  em.hide_all()
-  level = _levels.get(level_id)
-  pygame.mixer.music.load('assets/sounds/game_run.ogg')
-  level()
-  pygame.mixer.music.play(-1)
+def get_levels():
+    return list(_levels.keys())
+
+
+def load_level(level_id: str):
+    pygame.mixer.music.stop()
+    em = EntityManager.instance()
+    em.clear()
+    em.hide_all()
+    level = _levels.get(level_id)
+    pygame.mixer.music.load('assets/sounds/game_run.ogg')
+    level()
+    pygame.mixer.music.play(-1)

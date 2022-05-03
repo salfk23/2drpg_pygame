@@ -1,11 +1,7 @@
-import pygame
-from game_engine.engine import EntityManager, GameEngine
-from game_engine.entities.event import EmptyCallback
-from game_engine.entities.ui import UIButton
-from game_engine.helpers import Colors
+from game_engine.engine import GameEngine
+
 from ui import ui
 from ui.main_menu import MainMenu
-from levels.manager import load_level
 
 
 

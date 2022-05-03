@@ -1,4 +1,4 @@
-
+"""Particle module, used to create particles entities."""
 
 
 import math
@@ -6,12 +6,12 @@ import random
 import pygame
 from game_engine.entities.dynamic import MovableEntity
 from game_engine.entities.entity import ColoredEntity, EntityManager
-from game_engine.helpers import Colors, Size2D
+from game_engine.helpers import Colors
 
 
 class ExplosionParticle(MovableEntity, ColoredEntity):
   '''
-  Particle object that last for 360 frame, and have random direction
+  Particle object that last for frames, and have random direction
   '''
   def __init__(self, position: pygame.Vector2, color: tuple[int, int, int], size:tuple[int, int], angle:tuple[int, int], speed:tuple[float, float]):
       """Create particle
