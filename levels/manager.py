@@ -1,5 +1,6 @@
 
 
+import pygame
 from game_engine.entities.entity import EntityManager
 from levels.level_1 import run as level_1
 from levels.level_2 import run as level_2
@@ -23,8 +24,11 @@ def get_levels():
   return list(_levels.keys())
 
 def load_level(level_id:str):
+  pygame.mixer.music.stop()
   em = EntityManager.instance()
   em.clear()
   em.hide_all()
   level = _levels.get(level_id)
+  pygame.mixer.music.load('assets/sounds/game_run.ogg')
   level()
+  pygame.mixer.music.play(-1)
