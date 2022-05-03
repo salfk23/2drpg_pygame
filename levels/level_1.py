@@ -2,11 +2,11 @@
 
 import random
 import pygame
-from assets.objects.characters import Enemy, Player
+from assets.objects.characters import Demon, Enemy, Goblin, Minotaur, Player, Zombie
 from game_engine.entities.entity import BackgroundEntity, Entity, EntityManager
 from game_engine.entities.world_objects import Tile
 
-from ui.player import PlayerHUD
+from ui.player import GameWin, PlayerHUD
 from assets.images import dirt_image, grass_images, tree_images, foliage_images
 from assets.objects.weapons import *
 from game_engine.helpers import gradient_rect, tile_texture
@@ -70,8 +70,14 @@ def run():
 
     # Player and other entities declaration
     player = Player(pygame.Vector2(220, 300), 5, 10)
-    en = Enemy(pygame.Vector2(300, 300), (40, 60), 5, 10)
 
+    en = Enemy(pygame.Vector2(300, 300), (40, 60), 5, 10)
+    en_2 = Zombie(pygame.Vector2(500, 300))
+    en_3 = Goblin(pygame.Vector2(600, 300))
+    en_4 = Minotaur(pygame.Vector2(700, 300))
+    en_5 = Demon(pygame.Vector2(800, 300))
+
+    enemies = [en, en_2, en_3, en_4, en_5]
     # Tweaks
 
 
@@ -96,7 +102,7 @@ def run():
     em.add(invisible_walls)
     # Then other entities
     em.add(player)
-    em.add(en)
+    em.add(enemies)
     # Then background objects
     em.add(sky)
     em.add(background)
