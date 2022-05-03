@@ -79,6 +79,9 @@ class WeaponizedCharacter(Character):
       super().__init__(image, position, size, speed, jump_power)
       self.on_weapon_change()
 
+  def on_attack(self):
+    pass
+
   @property
   def anchor(self):
       return pygame.Vector2(self.rect.midright) if self.direction else pygame.Vector2(self.rect.midleft)
@@ -118,10 +121,11 @@ class Enemy(WeaponizedCharacter):
       self.strike_interval = 500
       self.flip_interval = 245
       self.frame = 0
+      self.attack_distance = 200
 
-      self.health_bar = Statusbar((50, 10))
+      self.health_bar = Statusbar((size[0], 10))
       self.strike_bar = Statusbar(
-        (50, 5), max=self.strike_interval, current=self.frame,
+        (size[0], 5), max=self.strike_interval, current=self.frame,
         fill_color=Colors.YELLOW, background_color=Colors.BLACK
       )
       super().__init__(image, position, size, speed, jump_power, weapon)
@@ -175,7 +179,7 @@ class Enemy(WeaponizedCharacter):
       if self.frame % self.flip_interval == 0:
         self.direction = direction
       if self.weapon is not None:
-        if distance < 200 and self.weapon.attacking == False and self.frame > self.strike_interval:
+        if distance < self.attack_distance and self.weapon.attacking == False and self.frame > self.strike_interval:
           self.weapon.attacking = True
           self.frame = 0
       if self.frame <= self.strike_interval:
