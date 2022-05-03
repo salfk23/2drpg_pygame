@@ -2,7 +2,7 @@
 from copy import deepcopy
 import pygame
 from game_engine.engine import GameEngine
-from game_engine.entities.entity import UIEntity
+from game_engine.entities.entity import EntityManager, UIEntity
 from game_engine.entities.ui import UIButton
 from game_engine.helpers import Colors, Config, IConfigListener, Singleton, Size2D
 from levels.manager import get_levels, load_level
@@ -68,8 +68,9 @@ class LevelSelectorInstance(UIEntity, IConfigListener):
         load_level(self.selected_level)
 
     def button_exit_click(self):
+        EntityManager.instance().clear()
+        EntityManager.instance().hide_all()
         from ui.main_menu import MainMenu #Circular import hack
-        self.show = False
         MainMenu.instance().show = True
 
 
