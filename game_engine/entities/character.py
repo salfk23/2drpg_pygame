@@ -72,13 +72,6 @@ class Character(
     def on_direction_change(self):
         self.sprite = self.sprites[self.direction]
 
-    @property
-    def health(self):
-        return self._health
-
-    @health.setter
-    def health(self, health: int):
-        Hurtable.health.fset(self, health)
 
     def update(self):
         AffectedByGravity.update(self)
