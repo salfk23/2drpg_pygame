@@ -1,3 +1,4 @@
+import random
 import pygame
 from game_engine.entities.dynamic import MovableEntity
 from game_engine.entities.entity import BiDirectionalEntity, Entity
@@ -6,7 +7,7 @@ from game_engine.helpers import Size2D
 
 
 class Weapon(MovableEntity, BiDirectionalEntity):
-  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, damage:int, speed:int):
+  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, damage:int, speed:int, on_hit_sounds:list[pygame.mixer.Sound]=[]):
     super().__init__((0,0), (0,0))
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Weapon"
@@ -21,6 +22,7 @@ class Weapon(MovableEntity, BiDirectionalEntity):
     self.attacked_entities: set[Hurtable] = set()
     self.owner = None
     self.type = "None"
+    self.on_hit_sounds = on_hit_sounds
 
   def __str__(self):
     return "{} {} [{}] > {}".format(super().__str__(), self.type, self.damage, self.owner)
@@ -51,7 +53,9 @@ class Weapon(MovableEntity, BiDirectionalEntity):
       if attacking:
         self.frame = 0
         self.attacked_entities.clear()
-        self.attacked_entities.add(self.owner)
+        if self.owner is not None:
+          self.attacked_entities.add(self.owner)
+          self.owner.on_attack()
 
   def on_direction_change(self):
     self.sprite = self.sprites[self.direction]
@@ -67,8 +71,8 @@ class Weapon(MovableEntity, BiDirectionalEntity):
 
 
 class Melee(Weapon):
-  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, damage:int, speed:int):
-    super().__init__(anchor, sprite, damage, speed)
+  def __init__(self,anchor:pygame.Vector2, sprite:pygame.Surface, damage:int, speed:int, on_hit_sounds:list[pygame.mixer.Sound]=[]):
+    super().__init__(anchor, sprite, damage, speed, on_hit_sounds=on_hit_sounds)
     BiDirectionalEntity.__init__(self, sprite)
     self.name = "Melee"
     self.type = "melee"
@@ -105,11 +109,12 @@ class Melee(Weapon):
 
       for entity in entity_hit:
         if entity not in self.attacked_entities:
+          if len(self.on_hit_sounds) > 0:
+            random.choice(self.on_hit_sounds).play()
           self.attacked_entities.add(entity)
           entity.hurt(self.damage)
-
   def copy(self):
-    return Melee(self.anchor, self.image, self.damage, self.speed)
+    return Melee(self.anchor, self.image, self.damage, self.speed, on_hit_sounds=self.on_hit_sounds)
 
 
 
